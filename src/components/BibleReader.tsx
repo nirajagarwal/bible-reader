@@ -3,52 +3,40 @@ import {
   Box,
   Typography,
   Paper,
-  Dialog,
-  DialogContent,
   IconButton,
   CircularProgress,
+  Button,
+  Drawer,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import ReactMarkdown from 'react-markdown';
 import { Verse, Commentary } from '@/types/bible';
 import localforage from 'localforage';
 
 interface BibleReaderProps {
   verses: Verse[];
-  onChapterEnd: () => void;
+  onChapterChange: (direction: 'next' | 'prev') => void;
+  hasNextChapter: boolean;
+  hasPrevChapter: boolean;
 }
 
-export default function BibleReader({ verses, onChapterEnd }: BibleReaderProps) {
+export default function BibleReader({ 
+  verses, 
+  onChapterChange,
+  hasNextChapter,
+  hasPrevChapter 
+}: BibleReaderProps) {
   const [selectedVerse, setSelectedVerse] = useState<Verse | null>(null);
   const [commentary, setCommentary] = useState<Commentary | null>(null);
   const [loading, setLoading] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!containerRef.current) return;
-      
-      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-      if (scrollHeight - scrollTop - clientHeight < 50) {
-        onChapterEnd();
-      }
-    };
-
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener('scroll', handleScroll);
-    }
-
-    return () => {
-      if (container) {
-        container.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, [onChapterEnd]);
+  const [isCommentaryOpen, setIsCommentaryOpen] = useState(false);
 
   const handleVerseClick = async (verse: Verse) => {
     setSelectedVerse(verse);
     setCommentary(null);
+    setIsCommentaryOpen(true);
     const verseKey = `${verse.book}-${verse.chapter}-${verse.verse}`;
     
     // Check if commentary exists in local storage
@@ -94,19 +82,25 @@ export default function BibleReader({ verses, onChapterEnd }: BibleReaderProps) 
   };
 
   const handleCloseCommentary = () => {
+    setIsCommentaryOpen(false);
     setSelectedVerse(null);
     setCommentary(null);
   };
 
   return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ 
+      height: '100vh', 
+      display: 'flex', 
+      flexDirection: 'column',
+      overflow: 'hidden' // Prevent body scroll
+    }}>
       <Box
-        ref={containerRef}
         sx={{
           flex: 1,
           overflow: 'auto',
           p: 2,
           '& > *': { mb: 2 },
+          height: 'calc(100vh - 40px)', // Updated to match new nav height
         }}
       >
         {verses.map((verse) => (
@@ -122,34 +116,84 @@ export default function BibleReader({ verses, onChapterEnd }: BibleReaderProps) 
             onClick={() => handleVerseClick(verse)}
           >
             <Typography
-              component="span"
-              variant="body2"
+              component="sup"
+              variant="caption"
               color="text.secondary"
-              sx={{ mr: 1 }}
+              sx={{ 
+                mr: 0.5,
+                fontSize: '0.75rem',
+                verticalAlign: 'super',
+                lineHeight: 0
+              }}
             >
-              {verse.verse}.
+              {verse.verse}
             </Typography>
             {verse.text}
           </Typography>
         ))}
       </Box>
 
-      <Dialog
-        open={Boolean(selectedVerse)}
+      <Box sx={{ 
+        p: 2, 
+        borderTop: 1, 
+        borderColor: 'divider',
+        display: 'flex',
+        justifyContent: 'space-between',
+        bgcolor: 'background.paper',
+        height: '40px', // Updated to match new nav height
+        boxSizing: 'border-box'
+      }}>
+        <Button
+          startIcon={<NavigateBeforeIcon />}
+          onClick={() => onChapterChange('prev')}
+          disabled={!hasPrevChapter}
+        >
+          Previous Chapter
+        </Button>
+        <Button
+          endIcon={<NavigateNextIcon />}
+          onClick={() => onChapterChange('next')}
+          disabled={!hasNextChapter}
+        >
+          Next Chapter
+        </Button>
+      </Box>
+
+      <Drawer
+        anchor="right"
+        open={isCommentaryOpen}
         onClose={handleCloseCommentary}
-        maxWidth="sm"
-        fullWidth
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: { xs: '100%', sm: 400 },
+            boxSizing: 'border-box',
+          },
+        }}
       >
-        <DialogContent>
-          <IconButton
-            onClick={handleCloseCommentary}
-            sx={{ position: 'absolute', right: 8, top: 8 }}
-          >
-            <CloseIcon />
-          </IconButton>
+        <Box sx={{ 
+          height: '100%', 
+          display: 'flex', 
+          flexDirection: 'column',
+          bgcolor: 'background.paper'
+        }}>
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'flex-end', 
+            p: 1,
+            borderBottom: 1,
+            borderColor: 'divider'
+          }}>
+            <IconButton onClick={handleCloseCommentary} size="small">
+              <CloseIcon />
+            </IconButton>
+          </Box>
           
           {selectedVerse && (
-            <Box sx={{ mt: 2 }}>
+            <Box sx={{ 
+              flex: 1, 
+              overflow: 'auto',
+              p: 1.5
+            }}>
               {loading ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
                   <CircularProgress size={24} />
@@ -157,10 +201,26 @@ export default function BibleReader({ verses, onChapterEnd }: BibleReaderProps) 
               ) : commentary ? (
                 <Paper 
                   sx={{ 
-                    p: 2, 
+                    p: 1.5, 
                     bgcolor: 'background.default',
                     boxShadow: 'none',
-                    border: 'none'
+                    border: 'none',
+                    '& p': {
+                      fontSize: '0.8125rem',
+                      mb: 0.75,
+                      lineHeight: 1.5
+                    },
+                    '& h1, & h2, & h3, & h4, & h5, & h6': {
+                      fontSize: '0.9375rem',
+                      mb: 0.75,
+                      mt: 1.0,
+                      fontWeight: 600
+                    },
+                    '& ul, & ol': {
+                      pl: 2,
+                      mb: 0.75,
+                      fontSize: '0.8125rem'
+                    }
                   }}
                 >
                   <ReactMarkdown>{commentary.text}</ReactMarkdown>
@@ -168,8 +228,8 @@ export default function BibleReader({ verses, onChapterEnd }: BibleReaderProps) 
               ) : null}
             </Box>
           )}
-        </DialogContent>
-      </Dialog>
+        </Box>
+      </Drawer>
     </Box>
   );
 } 

@@ -82,21 +82,27 @@ export default function Navigation({ currentBook, currentChapter, onBookSelect, 
       open={Boolean(anchorEl)}
       onClose={handleClose}
       PaperProps={{
-        style: {
-          maxHeight: 400,
-          width: '80vw',
-          maxWidth: 800,
+        sx: {
+          maxHeight: '80vh',
+          width: { xs: '100%', sm: 600 },
+          maxWidth: 600,
         },
       }}
     >
       <Grid container spacing={2} sx={{ p: 2 }}>
-        {Array.from({ length: 4 }).map((_, colIndex) => (
-          <Grid item xs={3} key={colIndex}>
-            {books.slice(colIndex * 10, (colIndex + 1) * 10).map((book) => (
+        {Array.from({ length: 3 }).map((_, colIndex) => (
+          <Grid item xs={4} key={colIndex}>
+            {books.slice(colIndex * 13, (colIndex + 1) * 13).map((book) => (
               <MenuItem
                 key={book}
                 onClick={() => handleBookSelect(book)}
                 selected={currentBook === book}
+                sx={{
+                  justifyContent: 'flex-start',
+                  py: 1,
+                  px: 2,
+                  fontSize: '0.875rem'
+                }}
               >
                 {book}
               </MenuItem>
@@ -117,12 +123,20 @@ export default function Navigation({ currentBook, currentChapter, onBookSelect, 
         onClose={handleClose}
         PaperProps={{
           style: {
-            maxHeight: 400,
+            maxHeight: '80vh',
             width: 'auto',
+            minWidth: 300,
           },
         }}
       >
-        <Box sx={{ p: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+        <Box sx={{ 
+          p: 2, 
+          display: 'flex', 
+          flexWrap: 'wrap', 
+          gap: 1,
+          maxHeight: '70vh',
+          overflow: 'auto'
+        }}>
           {Array.from({ length: chapters }, (_, i) => i + 1).map((chapter) => (
             <Button
               key={chapter}
@@ -145,12 +159,29 @@ export default function Navigation({ currentBook, currentChapter, onBookSelect, 
   };
 
   return (
-    <AppBar position="static" color="default" elevation={1}>
-      <Toolbar>
+    <AppBar 
+      position="static" 
+      color="default" 
+      elevation={1}
+      sx={{
+        '& .MuiToolbar-root': {
+          minHeight: '40px !important',
+          height: '40px',
+          padding: '0 16px'
+        }
+      }}
+    >
+      <Toolbar disableGutters>
         <Button
           color="inherit"
           onClick={handleOtClick}
-          sx={{ minWidth: 100 }}
+          sx={{ 
+            minWidth: 100,
+            py: 0.5,
+            px: 1,
+            fontSize: '0.875rem',
+            height: '32px'
+          }}
         >
           {currentBook && otBooks.includes(currentBook) ? currentBook : defaultOtBook}
         </Button>
@@ -159,7 +190,13 @@ export default function Navigation({ currentBook, currentChapter, onBookSelect, 
         <Button
           color="inherit"
           onClick={handleNtClick}
-          sx={{ minWidth: 100 }}
+          sx={{ 
+            minWidth: 100,
+            py: 0.5,
+            px: 1,
+            fontSize: '0.875rem',
+            height: '32px'
+          }}
         >
           {currentBook && ntBooks.includes(currentBook) ? currentBook : defaultNtBook}
         </Button>
@@ -168,7 +205,13 @@ export default function Navigation({ currentBook, currentChapter, onBookSelect, 
         <Button
           color="inherit"
           onClick={handleChapterClick}
-          sx={{ minWidth: 100 }}
+          sx={{ 
+            minWidth: 100,
+            py: 0.5,
+            px: 1,
+            fontSize: '0.875rem',
+            height: '32px'
+          }}
         >
           {currentChapter ? `Chapter ${currentChapter}` : 'Chapter'}
         </Button>

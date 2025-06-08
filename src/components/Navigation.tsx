@@ -164,12 +164,12 @@ export default function Navigation({
     >
       <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
         <Box>
-          <Button color="inherit" onClick={handleBookClick}>
+          <Button color="primary" onClick={handleBookClick}>
             {currentBook}
           </Button>
           {renderBookMenu(bookAnchorEl)}
 
-          <Button color="inherit" onClick={handleChapterClick}>
+          <Button color="primary" onClick={handleChapterClick}>
             {`CHAPTER ${currentChapter}`}
           </Button>
           {renderChapterMenu(chapterAnchorEl)}

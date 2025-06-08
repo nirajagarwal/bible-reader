@@ -13,7 +13,6 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import ReactMarkdown from 'react-markdown';
 import { Verse, Commentary } from '@/types/bible';
-import localforage from 'localforage';
 import ScaleLoader from 'react-spinners/ScaleLoader';
 
 interface BibleReaderProps {
@@ -47,46 +46,59 @@ export default function BibleReader({
     }
   }, [highlightedVerse, verses]); // Rerun when verses load for the new chapter
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Don't navigate if a modal/drawer is open or if typing in an input
+      if (isCommentaryOpen || (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement)) {
+        return;
+      }
+
+      if (event.key === 'ArrowRight' && hasNextChapter) {
+        onChapterChange('next');
+      } else if (event.key === 'ArrowLeft' && hasPrevChapter) {
+        onChapterChange('prev');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onChapterChange, hasNextChapter, hasPrevChapter, isCommentaryOpen]);
+
   const handleVerseClick = async (verse: Verse) => {
     setSelectedVerse(verse);
     setCommentary(null);
     setIsCommentaryOpen(true);
-    const verseKey = `${verse.book}-${verse.chapter}-${verse.verse}`;
-    
-    // Check if commentary exists in local storage
-    const cachedCommentary = await localforage.getItem<Commentary>(verseKey);
-    if (cachedCommentary) {
-      // Verify that the cached commentary matches the current verse
-      if (cachedCommentary.verse === verse.text) {
-        setCommentary(cachedCommentary);
-        return;
-      } else {
-        // If verse text doesn't match, clear the cache for this verse
-        await localforage.removeItem(verseKey);
-      }
-    }
-
     setLoading(true);
+
     try {
       const response = await fetch('/api/commentary', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ verse: verse.text }),
+        body: JSON.stringify({ 
+          book: verse.book,
+          chapter: verse.chapter,
+          verse: verse.verse,
+          text: verse.text 
+        }),
       });
 
       if (!response.ok) throw new Error('Failed to fetch commentary');
 
       const data = await response.json();
+      
+      // The API now directly returns the commentary text.
+      // We'll create a Commentary object on the client side.
       const newCommentary: Commentary = {
         verse: verse.text,
         text: data.commentary,
-        timestamp: Date.now(),
+        timestamp: Date.now(), // Still useful for display logic if needed
       };
 
-      // Cache the commentary
-      await localforage.setItem(verseKey, newCommentary);
       setCommentary(newCommentary);
     } catch (error) {
       console.error('Error fetching commentary:', error);
@@ -182,9 +194,8 @@ export default function BibleReader({
         onClose={handleCloseCommentary}
         sx={{
           '& .MuiDrawer-paper': {
-            width: { xs: '100%', sm: 400 },
+            width: { xs: '100%', sm: 480 },
             boxSizing: 'border-box',
-            position: 'relative',
           },
         }}
       >

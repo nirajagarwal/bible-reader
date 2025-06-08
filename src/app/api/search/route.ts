@@ -6,7 +6,7 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const MONGO_URI = process.env.MONGODB_URI;
 const DB_NAME = 'knowra';
 const COLLECTION_NAME = 'bible';
-const SIMILARITY_THRESHOLD = 0.75; // Adjust as needed
+const SIMILARITY_THRESHOLD = 0.7; // Adjust as needed
 
 if (!GEMINI_API_KEY || !MONGO_URI) {
   throw new Error('API keys are not configured in environment variables');
@@ -41,8 +41,8 @@ export async function POST(request: Request) {
           index: 'vector_bible',
           path: 'embedding',
           queryVector: queryVector,
-          numCandidates: 100,
-          limit: 10,
+          numCandidates: 150,
+          limit: 50,
         },
       },
       {

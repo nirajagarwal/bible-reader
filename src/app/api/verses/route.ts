@@ -27,8 +27,10 @@ export async function GET(request: Request) {
       );
     }
 
-    // Return as array of { verse: number, text: string }
+    // Return as array of { book, chapter, verse, text }
     const verses = chapterVerses.map((text: string, idx: number) => ({
+      book,
+      chapter: parseInt(chapter, 10),
       verse: idx + 1,
       text,
     })).filter((v: any) => v.text && v.text.length > 0);

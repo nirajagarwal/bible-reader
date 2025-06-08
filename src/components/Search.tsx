@@ -4,16 +4,17 @@ import {
   InputBase,
   Paper,
   IconButton,
-  CircularProgress,
   Typography,
   Button,
   List,
   ListItem,
   ListItemText,
+  useTheme,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ScaleLoader from 'react-spinners/ScaleLoader';
 
 interface SearchResult {
   book: string;
@@ -35,6 +36,7 @@ export default function Search({ onVerseSelect }: SearchProps) {
   const [error, setError] = useState<string | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [lastTappedVerseId, setLastTappedVerseId] = useState<string | null>(null);
+  const theme = useTheme();
   
   const resultsListRef = useRef<HTMLUListElement>(null);
   
@@ -93,14 +95,14 @@ export default function Search({ onVerseSelect }: SearchProps) {
   };
   
   const handleCopy = () => {
-    const textToCopy = results.map(r => `${r.book} ${r.chapter}:${r.verse} - ${r.text}`).join('\\n');
+    const textToCopy = results.map(r => `${r.book} ${r.chapter}:${r.verse} - ${r.text}`).join('\n\n');
     navigator.clipboard.writeText(textToCopy);
   };
 
   return (
     <Box sx={{ 
       position: 'relative',
-      width: { xs: '180px', sm: '320px' }
+      width: { xs: '280px', sm: '320px', md: '480px' }
     }}>
       <Paper
         component="form"
@@ -160,7 +162,7 @@ export default function Search({ onVerseSelect }: SearchProps) {
                 </Box>
             </Box>
             <Box sx={{ flex: 1, overflowY: 'auto' }}>
-                {loading && <Box sx={{display: 'flex', justifyContent: 'center', p: 4}}><CircularProgress /></Box>}
+                {loading && <Box sx={{display: 'flex', justifyContent: 'center', p: 4}}><ScaleLoader color={theme.palette.text.secondary} /></Box>}
                 {error && <Typography color="error" sx={{p: 2}}>{error}</Typography>}
                 {!loading && !error && results.length === 0 && (
                     <Typography color="text.secondary" sx={{p: 2}}>No results found for your query.</Typography>
@@ -180,8 +182,8 @@ export default function Search({ onVerseSelect }: SearchProps) {
                                 }}
                               >
                                 <ListItemText
-                                  primary={`${result.book} ${result.chapter}:${result.verse}`}
-                                  secondary={result.text}
+                                  secondary={`${result.book} ${result.chapter}:${result.verse}`}
+                                  primary={result.text}
                                 />
                               </ListItem>
                         ))}

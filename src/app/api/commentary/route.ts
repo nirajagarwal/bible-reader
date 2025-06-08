@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-preview-06-05:generateContent';
 
 export async function POST(request: Request) {
   try {
@@ -31,9 +31,11 @@ export async function POST(request: Request) {
           {
             parts: [
               {
-                text: `Provide a Bible commentary with no preamble or postamble. Use markdown headings and bullet points to organize your thoughts.
-
-Verse: ${verse}`
+                text: `You are a Bible scholar that can synthesize diverse points of view into a modern and insightful commentary. 
+                Provide a structured commentary on the following verse. 
+                Where relevant, point out related verses or themes in the Bible to add context.
+                Just the content, no preamble or postamble.
+                Verse: ${verse}`
               }
             ]
           }

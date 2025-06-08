@@ -4,34 +4,48 @@ import {
   Typography,
   Paper,
   IconButton,
-  CircularProgress,
   Button,
   Drawer,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import ReactMarkdown from 'react-markdown';
 import { Verse, Commentary } from '@/types/bible';
 import localforage from 'localforage';
+import ScaleLoader from 'react-spinners/ScaleLoader';
 
 interface BibleReaderProps {
   verses: Verse[];
   onChapterChange: (direction: 'next' | 'prev') => void;
   hasNextChapter: boolean;
   hasPrevChapter: boolean;
+  highlightedVerse: number | null;
 }
 
 export default function BibleReader({ 
   verses, 
   onChapterChange,
   hasNextChapter,
-  hasPrevChapter 
+  hasPrevChapter,
+  highlightedVerse
 }: BibleReaderProps) {
   const [selectedVerse, setSelectedVerse] = useState<Verse | null>(null);
   const [commentary, setCommentary] = useState<Commentary | null>(null);
   const [loading, setLoading] = useState(false);
   const [isCommentaryOpen, setIsCommentaryOpen] = useState(false);
+  const highlightedVerseRef = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
+
+  useEffect(() => {
+    if (highlightedVerse && highlightedVerseRef.current) {
+      highlightedVerseRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [highlightedVerse, verses]); // Rerun when verses load for the new chapter
 
   const handleVerseClick = async (verse: Verse) => {
     setSelectedVerse(verse);
@@ -105,6 +119,7 @@ export default function BibleReader({
       >
         {verses.map((verse) => (
           <Typography
+            ref={verse.verse === highlightedVerse ? highlightedVerseRef : null}
             key={`${verse.chapter}-${verse.verse}`}
             variant="body1"
             sx={{
@@ -112,6 +127,7 @@ export default function BibleReader({
               '&:hover': { backgroundColor: 'action.hover' },
               p: 1,
               borderRadius: 1,
+              fontWeight: verse.verse === highlightedVerse ? 'bold' : 'normal',
             }}
             onClick={() => handleVerseClick(verse)}
           >
@@ -138,9 +154,10 @@ export default function BibleReader({
         borderTop: 1, 
         borderColor: 'divider',
         display: 'flex',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
         bgcolor: 'background.paper',
-        height: '40px', // Updated to match new nav height
+        height: '40px',
         boxSizing: 'border-box'
       }}>
         <Button
@@ -148,7 +165,7 @@ export default function BibleReader({
           onClick={() => onChapterChange('prev')}
           disabled={!hasPrevChapter}
         >
-          Previous Chapter
+          PREVIOUS
         </Button>
         <Button
           endIcon={<NavigateNextIcon />}
@@ -167,67 +184,37 @@ export default function BibleReader({
           '& .MuiDrawer-paper': {
             width: { xs: '100%', sm: 400 },
             boxSizing: 'border-box',
+            position: 'relative',
           },
         }}
       >
-        <Box sx={{ 
-          height: '100%', 
-          display: 'flex', 
-          flexDirection: 'column',
-          bgcolor: 'background.paper'
-        }}>
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'flex-end', 
-            p: 1,
-            borderBottom: 1,
-            borderColor: 'divider'
-          }}>
-            <IconButton onClick={handleCloseCommentary} size="small">
-              <CloseIcon />
-            </IconButton>
-          </Box>
-          
-          {selectedVerse && (
-            <Box sx={{ 
-              flex: 1, 
-              overflow: 'auto',
-              p: 1.5
-            }}>
-              {loading ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-                  <CircularProgress size={24} />
-                </Box>
-              ) : commentary ? (
-                <Paper 
-                  sx={{ 
-                    p: 1.5, 
-                    bgcolor: 'background.default',
-                    boxShadow: 'none',
-                    border: 'none',
-                    '& p': {
-                      fontSize: '0.8125rem',
-                      mb: 0.75,
-                      lineHeight: 1.5
-                    },
-                    '& h1, & h2, & h3, & h4, & h5, & h6': {
-                      fontSize: '0.9375rem',
-                      mb: 0.75,
-                      mt: 1.0,
-                      fontWeight: 600
-                    },
-                    '& ul, & ol': {
-                      pl: 2,
-                      mb: 0.75,
-                      fontSize: '0.8125rem'
-                    }
-                  }}
-                >
-                  <ReactMarkdown>{commentary.text}</ReactMarkdown>
-                </Paper>
-              ) : null}
+        <Button
+          onClick={handleCloseCommentary}
+          sx={{
+            position: 'absolute',
+            top: 16,
+            right: 16,
+            minWidth: 'auto',
+            width: 32,
+            height: 32,
+            borderRadius: '50%',
+            backgroundColor: 'rgba(0, 0, 0, 0.1)',
+            color: 'text.primary',
+            '&:hover': {
+              backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            },
+            zIndex: 1300,
+          }}
+        >×
+        </Button>
+        
+        <Box sx={{ height: '100%', p: 3, pt: 0, overflowY: 'auto' }}>
+          {loading && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+              <ScaleLoader color={theme.palette.text.secondary} />
             </Box>
           )}
+          {!loading && commentary && <ReactMarkdown>{commentary.text}</ReactMarkdown>}
         </Box>
       </Drawer>
     </Box>

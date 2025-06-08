@@ -16,6 +16,7 @@ export default function Home() {
   const [hasPrevChapter, setHasPrevChapter] = useState(false);
   const [bibleStructure, setBibleStructure] = useState<any>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [highlightedVerse, setHighlightedVerse] = useState<number | null>(null);
 
   // Load bible structure and initial state
   useEffect(() => {
@@ -104,14 +105,23 @@ export default function Home() {
   const handleBookSelect = (book: string) => {
     setCurrentBook(book);
     setCurrentChapter(1);
+    setHighlightedVerse(null);
   };
 
   const handleChapterSelect = (chapter: number) => {
     setCurrentChapter(chapter);
+    setHighlightedVerse(null);
   };
 
   const handleChapterChange = (direction: 'next' | 'prev') => {
     setCurrentChapter(prev => direction === 'next' ? prev + 1 : prev - 1);
+    setHighlightedVerse(null);
+  };
+
+  const handleVerseSelectFromSearch = (book: string, chapter: number, verse: number) => {
+    setCurrentBook(book);
+    setCurrentChapter(chapter);
+    setHighlightedVerse(verse);
   };
 
   return (
@@ -121,12 +131,14 @@ export default function Home() {
         currentChapter={currentChapter}
         onBookSelect={handleBookSelect}
         onChapterSelect={handleChapterSelect}
+        onVerseSelect={handleVerseSelectFromSearch}
       />
       <BibleReader 
         verses={verses} 
         onChapterChange={handleChapterChange}
         hasNextChapter={hasNextChapter}
         hasPrevChapter={hasPrevChapter}
+        highlightedVerse={highlightedVerse}
       />
     </Box>
   );

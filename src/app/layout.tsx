@@ -6,9 +6,19 @@ import CssBaseline from '@mui/material/CssBaseline'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Bible Reader',
-  description: 'A modern Bible reader with AI-powered commentary',
+  metadataBase: new URL('https://berean-bible.vercel.app/'),
+  title: {
+    default: 'Berean Bible',
+    template: `%s | Berean Bible`,
+  },
+  description: 'Berean Bible reader with AI-powered semantic search and commentary.',
   manifest: '/manifest.json',
+  keywords: ['berean', 'bible', 'reader', 'semantic', 'search', 'commentary', 'ai'],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Berean Bible',
+  },
 }
 
 export default function RootLayout({

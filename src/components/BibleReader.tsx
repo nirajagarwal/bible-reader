@@ -62,6 +62,7 @@ export default function BibleReader({
   const [selectedVerse, setSelectedVerse] = useState<Verse | null>(null);
   const [commentary, setCommentary] = useState<Commentary | null>(null);
   const [loading, setLoading] = useState(false);
+  const [commentaryError, setCommentaryError] = useState<string | null>(null);
   const [chapterAnchorEl, setChapterAnchorEl] = useState<null | HTMLElement>(null);
   const highlightedVerseRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -99,6 +100,7 @@ export default function BibleReader({
   const handleVerseClick = async (verse: Verse) => {
     setSelectedVerse(verse);
     setCommentary(null);
+    setCommentaryError(null);
     onCommentaryDrawerOpen();
     setLoading(true);
 
@@ -116,9 +118,11 @@ export default function BibleReader({
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to fetch commentary');
-
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch commentary');
+      }
       
       // The API now directly returns the commentary text.
       // We'll create a Commentary object on the client side.
@@ -130,6 +134,11 @@ export default function BibleReader({
 
       setCommentary(newCommentary);
     } catch (error) {
+      if (error instanceof Error) {
+        setCommentaryError(error.message);
+      } else {
+        setCommentaryError('An unknown error occurred.');
+      }
       console.error('Error fetching commentary:', error);
     } finally {
       setLoading(false);
@@ -140,6 +149,7 @@ export default function BibleReader({
     onCommentaryDrawerClose();
     setSelectedVerse(null);
     setCommentary(null);
+    setCommentaryError(null);
   };
 
   const handleChapterClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -322,7 +332,12 @@ export default function BibleReader({
               <ScaleLoader color={theme.palette.text.secondary} />
             </Box>
           )}
-          {!loading && commentary && <ReactMarkdown>{commentary.text}</ReactMarkdown>}
+          {!loading && commentaryError && (
+            <Typography color="error" sx={{p: 2, textAlign: 'center'}}>
+              {commentaryError}
+            </Typography>
+          )}
+          {!loading && !commentaryError && commentary && <ReactMarkdown>{commentary.text}</ReactMarkdown>}
         </Box>
       </Drawer>
 

@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import { MongoClient } from 'mongodb';
 
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-pro-preview-06-05';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-preview-06-05:generateContent';
 const MONGO_URI = process.env.MONGODB_URI;
 const DB_NAME = 'knowra';
 const COLLECTION_NAME = 'bible';
+const COMMENTARY_RATE_LIMIT = parseInt(process.env.COMMENTARY_RATE_LIMIT_PER_DAY || '1000', 10);
 
 if (!MONGO_URI) {
   throw new Error('Please define the MONGODB_URI environment variable');
@@ -55,6 +57,25 @@ export async function POST(request: Request) {
 
     if (verseDoc && verseDoc.commentary) {
       return NextResponse.json({ commentary: verseDoc.commentary });
+    }
+
+    // Rate limit check
+    const rateLimitCollection = db.collection('bible_rate_limits');
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+    const usage = await rateLimitCollection.findOneAndUpdate(
+      { key: 'commentary_generation', date: today },
+      { $inc: { count: 1 } },
+      { upsert: true, returnDocument: 'after' }
+    );
+
+    const currentCount = usage?.value?.count || 1;
+
+    if (currentCount > COMMENTARY_RATE_LIMIT) {
+      return NextResponse.json(
+        { error: 'Commentary generation limit reached for today.' },
+        { status: 429 }
+      );
     }
 
     // 2. If not found, generate new commentary

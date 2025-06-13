@@ -38,6 +38,7 @@ interface BibleReaderProps {
   isCommentaryDrawerOpen: boolean;
   onCommentaryDrawerOpen: () => void;
   onCommentaryDrawerClose: () => void;
+  onFindRelated: (query: string) => void;
 }
 
 export default function BibleReader({ 
@@ -58,6 +59,7 @@ export default function BibleReader({
   isCommentaryDrawerOpen,
   onCommentaryDrawerOpen,
   onCommentaryDrawerClose,
+  onFindRelated,
 }: BibleReaderProps) {
   const [selectedVerse, setSelectedVerse] = useState<Verse | null>(null);
   const [commentary, setCommentary] = useState<Commentary | null>(null);
@@ -65,6 +67,7 @@ export default function BibleReader({
   const [commentaryError, setCommentaryError] = useState<string | null>(null);
   const [chapterAnchorEl, setChapterAnchorEl] = useState<null | HTMLElement>(null);
   const highlightedVerseRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
 
   useEffect(() => {
@@ -73,6 +76,8 @@ export default function BibleReader({
         behavior: 'smooth',
         block: 'center',
       });
+    } else if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
     }
   }, [highlightedVerse, verses]); // Rerun when verses load for the new chapter
 
@@ -152,6 +157,13 @@ export default function BibleReader({
     setCommentaryError(null);
   };
 
+  const handleFindRelated = () => {
+    if (selectedVerse) {
+      onFindRelated(selectedVerse.text);
+      handleCloseCommentary();
+    }
+  };
+
   const handleChapterClick = (event: React.MouseEvent<HTMLElement>) => {
     setChapterAnchorEl(event.currentTarget);
   };
@@ -213,12 +225,13 @@ export default function BibleReader({
       overflow: 'hidden' // Prevent body scroll
     }}>
       <Box
+        ref={contentRef}
         sx={{
           flex: 1,
           overflow: 'auto',
           p: 2,
           '& > *': { mb: 2 },
-          height: navsHidden ? '100vh' : 'calc(100vh - 56px)',
+          pb: navsHidden ? 2 : '72px', // Padding for the bottom nav
         }}
       >
         {verses.map((verse) => (
@@ -230,8 +243,9 @@ export default function BibleReader({
               cursor: 'pointer',
               '&:hover': { backgroundColor: 'action.hover' },
               p: 1,
-              borderRadius: 1,
+              borderRadius: 2,
               fontWeight: verse.verse === highlightedVerse ? 'bold' : 'normal',
+              border: `1px solid ${verse.verse === highlightedVerse ? theme.palette.divider : 'transparent'}`,
             }}
             onClick={() => handleVerseClick(verse)}
           >
@@ -264,8 +278,10 @@ export default function BibleReader({
           bgcolor: 'background.paper',
           height: '56px',
           boxSizing: 'border-box',
-          position: 'sticky',
+          position: 'fixed',
           bottom: 0,
+          left: 0,
+          right: 0,
           zIndex: (theme) => theme.zIndex.drawer + 1
         }}>
           <Button
@@ -306,27 +322,31 @@ export default function BibleReader({
           },
         }}
       >
-        <Button
-          onClick={handleCloseCommentary}
+        <Box
           sx={{
-            position: 'absolute',
-            top: 16,
-            right: 16,
-            minWidth: 'auto',
-            width: 32,
-            height: 32,
-            borderRadius: '50%',
-            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-            color: 'text.primary',
-            '&:hover': {
-              backgroundColor: 'rgba(0, 0, 0, 0.2)',
-            },
-            zIndex: 1300,
+            p: 2,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderBottom: 1,
+            borderColor: 'divider',
+            flexShrink: 0,
           }}
-        >×
-        </Button>
+        >
+          <Typography variant="h6" component="div">
+            Commentary
+          </Typography>
+          <Box>
+            <Button color="primary" onClick={handleFindRelated} sx={{ mr: 1 }}>
+              Related
+            </Button>
+            <IconButton onClick={handleCloseCommentary}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Box>
         
-        <Box sx={{ height: '100%', p: 3, pt: 0, overflowY: 'auto' }}>
+        <Box sx={{ flex: 1, p: 3, overflowY: 'auto' }}>
           {loading && (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
               <ScaleLoader color={theme.palette.text.secondary} />

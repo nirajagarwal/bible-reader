@@ -194,6 +194,7 @@ export default function Home() {
         isCommentaryDrawerOpen={isCommentaryDrawerOpen}
         onCommentaryDrawerOpen={handleOpenCommentaryDrawer}
         onCommentaryDrawerClose={handleCloseCommentaryDrawer}
+        onFindRelated={handleSearch}
       />
     </Box>
   );

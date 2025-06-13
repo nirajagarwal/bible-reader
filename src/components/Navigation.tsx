@@ -10,16 +10,19 @@ import {
   Typography,
   Tabs,
   Tab,
+  InputBase,
+  Paper,
+  IconButton,
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import { fetchBibleStructure, getBookList, getChapterCount, BibleStructure } from '@/lib/bibleData';
-import Search from './Search';
 
 interface NavigationProps {
   currentBook: string;
   currentChapter: number;
   onBookSelect: (book: string) => void;
   onChapterSelect: (chapter: number) => void;
-  onVerseSelect: (book: string, chapter: number, verse: number) => void;
+  onSearch: (query: string) => void;
 }
 
 export default function Navigation({ 
@@ -27,7 +30,7 @@ export default function Navigation({
   currentChapter, 
   onBookSelect, 
   onChapterSelect,
-  onVerseSelect
+  onSearch,
 }: NavigationProps) {
   const [bible, setBible] = useState<BibleStructure | null>(null);
   const [otBooks, setOtBooks] = useState<string[]>([]);
@@ -35,6 +38,7 @@ export default function Navigation({
   const [bookAnchorEl, setBookAnchorEl] = useState<null | HTMLElement>(null);
   const [chapterAnchorEl, setChapterAnchorEl] = useState<null | HTMLElement>(null);
   const [tabValue, setTabValue] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchBibleStructure().then((data) => {
@@ -50,6 +54,11 @@ export default function Navigation({
       }
     });
   }, [currentBook]); // Rerun if currentBook changes, for initial load
+
+  const handleSearchSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    onSearch(searchQuery);
+  };
 
   const handleBookClick = (event: React.MouseEvent<HTMLElement>) => {
     setBookAnchorEl(event.currentTarget);
@@ -92,7 +101,8 @@ export default function Navigation({
                 fontSize: '1rem',
                 minHeight: 'unset',
                 lineHeight: 1.5,
-                '&.MuiMenuItem-root': {
+                maxWidth: '100%',
+                '& .MuiMenuItem-root': {
                   paddingTop: 1,
                   paddingBottom:1,
                   marginTop: 0,
@@ -100,7 +110,16 @@ export default function Navigation({
                 }
               }}
             >
-              {book}
+              <Typography
+                sx={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  width: '100%'
+                }}
+              >
+                {book}
+              </Typography>
             </MenuItem>
           ))}
         </Grid>
@@ -157,10 +176,13 @@ export default function Navigation({
 
   return (
     <AppBar 
-      position="static" 
+      position="sticky" 
       color="default" 
       elevation={1}
-      sx={{ '& .MuiToolbar-root': { minHeight: '48px', padding: '0 16px' } }}
+      sx={{ 
+        '& .MuiToolbar-root': { minHeight: '48px', padding: '0 16px' },
+        zIndex: (theme) => theme.zIndex.drawer + 1
+      }}
     >
       <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
         <Box>
@@ -168,14 +190,45 @@ export default function Navigation({
             {currentBook}
           </Button>
           {renderBookMenu(bookAnchorEl)}
-
-          <Button color="primary" onClick={handleChapterClick}>
-            {`CHAPTER ${currentChapter}`}
-          </Button>
-          {renderChapterMenu(chapterAnchorEl)}
         </Box>
         
-        <Search onVerseSelect={onVerseSelect} />
+        <Box sx={{ 
+          position: 'relative',
+          width: { xs: '280px', sm: '320px', md: '480px' }
+        }}>
+          <Paper
+            component="form"
+            variant="outlined"
+            onSubmit={handleSearchSubmit}
+            sx={{ 
+              p: '2px 4px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              width: '100%',
+              borderRadius: '8px',
+              height: 38,
+            }}
+          >
+            <InputBase
+              sx={{ ml: 1, flex: 1 }}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search Bible..."
+            />
+            <IconButton 
+              type="submit" 
+              sx={{ 
+                p: '8px',
+                '&:hover': {
+                  backgroundColor: 'transparent',
+                },
+              }} 
+              aria-label="search"
+            >
+              <SearchIcon />
+            </IconButton>
+          </Paper>
+        </Box>
       </Toolbar>
     </AppBar>
   );

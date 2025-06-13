@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import Navigation from '@/components/Navigation';
 import BibleReader from '@/components/BibleReader';
-import { Verse, ReadingState } from '@/types/bible';
+import { Verse, ReadingState, SearchResult } from '@/types/bible';
 import localforage from 'localforage';
 import { getChapterCount, fetchBibleStructure } from '@/lib/bibleData';
 
@@ -17,6 +17,12 @@ export default function Home() {
   const [bibleStructure, setBibleStructure] = useState<any>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [highlightedVerse, setHighlightedVerse] = useState<number | null>(null);
+  const [totalChapters, setTotalChapters] = useState(1);
+  const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [isCommentaryDrawerOpen, setIsCommentaryDrawerOpen] = useState(false);
 
   // Load bible structure and initial state
   useEffect(() => {
@@ -89,16 +95,9 @@ export default function Home() {
   useEffect(() => {
     if (!bibleStructure) return;
 
-    const totalChapters = getChapterCount(bibleStructure, currentBook);
-    console.log('Navigation update:', {
-      currentBook,
-      currentChapter,
-      totalChapters,
-      hasNext: currentChapter < totalChapters,
-      hasPrev: currentChapter > 1
-    });
-
-    setHasNextChapter(currentChapter < totalChapters);
+    const chapters = getChapterCount(bibleStructure, currentBook);
+    setTotalChapters(chapters);
+    setHasNextChapter(currentChapter < chapters);
     setHasPrevChapter(currentChapter > 1);
   }, [currentBook, currentChapter, bibleStructure]);
 
@@ -124,21 +123,77 @@ export default function Home() {
     setHighlightedVerse(verse);
   };
 
+  const handleSearch = async (query: string) => {
+    if (!query.trim()) return;
+
+    setIsSearchLoading(true);
+    setSearchError(null);
+    setSearchResults([]);
+    setIsSearchDrawerOpen(true);
+
+    try {
+      const response = await fetch('/api/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Search failed');
+      }
+
+      const data = await response.json();
+      setSearchResults(data.results);
+    } catch (err) {
+      setSearchError('An error occurred while searching.');
+    } finally {
+      setIsSearchLoading(false);
+    }
+  };
+
+  const handleCloseSearchDrawer = () => {
+    setIsSearchDrawerOpen(false);
+  };
+
+  const handleOpenCommentaryDrawer = () => {
+    setIsCommentaryDrawerOpen(true);
+  };
+
+  const handleCloseCommentaryDrawer = () => {
+    setIsCommentaryDrawerOpen(false);
+  };
+
+  const navsHidden = isSearchDrawerOpen || isCommentaryDrawerOpen;
+
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Navigation
-        currentBook={currentBook}
-        currentChapter={currentChapter}
-        onBookSelect={handleBookSelect}
-        onChapterSelect={handleChapterSelect}
-        onVerseSelect={handleVerseSelectFromSearch}
-      />
-      <BibleReader 
-        verses={verses} 
+      {!navsHidden && (
+        <Navigation
+          currentBook={currentBook}
+          currentChapter={currentChapter}
+          onBookSelect={handleBookSelect}
+          onChapterSelect={handleChapterSelect}
+          onSearch={handleSearch}
+        />
+      )}
+      <BibleReader
+        verses={verses}
         onChapterChange={handleChapterChange}
         hasNextChapter={hasNextChapter}
         hasPrevChapter={hasPrevChapter}
         highlightedVerse={highlightedVerse}
+        currentChapter={currentChapter}
+        onChapterSelect={handleChapterSelect}
+        totalChapters={totalChapters}
+        onVerseSelectFromSearch={handleVerseSelectFromSearch}
+        isSearchDrawerOpen={isSearchDrawerOpen}
+        onCloseSearchDrawer={handleCloseSearchDrawer}
+        searchResults={searchResults}
+        isSearchLoading={isSearchLoading}
+        searchError={searchError}
+        isCommentaryDrawerOpen={isCommentaryDrawerOpen}
+        onCommentaryDrawerOpen={handleOpenCommentaryDrawer}
+        onCommentaryDrawerClose={handleCloseCommentaryDrawer}
       />
     </Box>
   );

@@ -6,13 +6,18 @@ import {
   IconButton,
   Button,
   Drawer,
+  Menu,
+  List,
+  ListItem,
+  ListItemText,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import ReactMarkdown from 'react-markdown';
-import { Verse, Commentary } from '@/types/bible';
+import { Verse, Commentary, SearchResult } from '@/types/bible';
 import ScaleLoader from 'react-spinners/ScaleLoader';
 
 interface BibleReaderProps {
@@ -21,6 +26,18 @@ interface BibleReaderProps {
   hasNextChapter: boolean;
   hasPrevChapter: boolean;
   highlightedVerse: number | null;
+  currentChapter: number;
+  onChapterSelect: (chapter: number) => void;
+  totalChapters: number;
+  onVerseSelectFromSearch: (book: string, chapter: number, verse: number) => void;
+  isSearchDrawerOpen: boolean;
+  onCloseSearchDrawer: () => void;
+  searchResults: SearchResult[];
+  isSearchLoading: boolean;
+  searchError: string | null;
+  isCommentaryDrawerOpen: boolean;
+  onCommentaryDrawerOpen: () => void;
+  onCommentaryDrawerClose: () => void;
 }
 
 export default function BibleReader({ 
@@ -28,12 +45,24 @@ export default function BibleReader({
   onChapterChange,
   hasNextChapter,
   hasPrevChapter,
-  highlightedVerse
+  highlightedVerse,
+  currentChapter,
+  onChapterSelect,
+  totalChapters,
+  onVerseSelectFromSearch,
+  isSearchDrawerOpen,
+  onCloseSearchDrawer,
+  searchResults,
+  isSearchLoading,
+  searchError,
+  isCommentaryDrawerOpen,
+  onCommentaryDrawerOpen,
+  onCommentaryDrawerClose,
 }: BibleReaderProps) {
   const [selectedVerse, setSelectedVerse] = useState<Verse | null>(null);
   const [commentary, setCommentary] = useState<Commentary | null>(null);
   const [loading, setLoading] = useState(false);
-  const [isCommentaryOpen, setIsCommentaryOpen] = useState(false);
+  const [chapterAnchorEl, setChapterAnchorEl] = useState<null | HTMLElement>(null);
   const highlightedVerseRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
 
@@ -49,7 +78,7 @@ export default function BibleReader({
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Don't navigate if a modal/drawer is open or if typing in an input
-      if (isCommentaryOpen || (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement)) {
+      if (isCommentaryDrawerOpen || isSearchDrawerOpen || (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement)) {
         return;
       }
 
@@ -65,12 +94,12 @@ export default function BibleReader({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onChapterChange, hasNextChapter, hasPrevChapter, isCommentaryOpen]);
+  }, [onChapterChange, hasNextChapter, hasPrevChapter, isCommentaryDrawerOpen, isSearchDrawerOpen]);
 
   const handleVerseClick = async (verse: Verse) => {
     setSelectedVerse(verse);
     setCommentary(null);
-    setIsCommentaryOpen(true);
+    onCommentaryDrawerOpen();
     setLoading(true);
 
     try {
@@ -108,10 +137,63 @@ export default function BibleReader({
   };
 
   const handleCloseCommentary = () => {
-    setIsCommentaryOpen(false);
+    onCommentaryDrawerClose();
     setSelectedVerse(null);
     setCommentary(null);
   };
+
+  const handleChapterClick = (event: React.MouseEvent<HTMLElement>) => {
+    setChapterAnchorEl(event.currentTarget);
+  };
+
+  const handleChapterClose = () => {
+    setChapterAnchorEl(null);
+  };
+
+  const handleChapterSelect = (chapter: number) => {
+    onChapterSelect(chapter);
+    handleChapterClose();
+  };
+
+  const handleSearchResultClick = (result: SearchResult) => {
+    onVerseSelectFromSearch(result.book, result.chapter, result.verse);
+    onCloseSearchDrawer();
+  };
+
+  const handleCopySearchResults = () => {
+    const textToCopy = searchResults.map(r => `${r.book} ${r.chapter}:${r.verse} - ${r.text}`).join('\n\n');
+    navigator.clipboard.writeText(textToCopy);
+  };
+
+  const renderChapterMenu = (anchorEl: HTMLElement | null) => {
+    if (!verses.length) return null;
+    return (
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleChapterClose}
+        PaperProps={{
+          style: { maxHeight: '80vh', width: 'auto', minWidth: 300 },
+        }}
+      >
+        <Box sx={{ p: 2, display: 'flex', flexWrap: 'wrap', gap: 1, maxHeight: '70vh', overflow: 'auto' }}>
+          {Array.from({ length: totalChapters }, (_, i) => i + 1).map((chapter) => (
+            <Button
+              key={chapter}
+              variant="outlined"
+              size="small"
+              onClick={() => handleChapterSelect(chapter)}
+              sx={{ minWidth: 40, height: 40, borderRadius: '50%', p: 0 }}
+            >
+              {chapter}
+            </Button>
+          ))}
+        </Box>
+      </Menu>
+    );
+  };
+
+  const navsHidden = isSearchDrawerOpen || isCommentaryDrawerOpen;
 
   return (
     <Box sx={{ 
@@ -126,7 +208,7 @@ export default function BibleReader({
           overflow: 'auto',
           p: 2,
           '& > *': { mb: 2 },
-          height: 'calc(100vh - 40px)', // Updated to match new nav height
+          height: navsHidden ? '100vh' : 'calc(100vh - 56px)',
         }}
       >
         {verses.map((verse) => (
@@ -161,36 +243,51 @@ export default function BibleReader({
         ))}
       </Box>
 
-      <Box sx={{ 
-        p: 2, 
-        borderTop: 1, 
-        borderColor: 'divider',
-        display: 'flex',
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-        bgcolor: 'background.paper',
-        height: '40px',
-        boxSizing: 'border-box'
-      }}>
-        <Button
-          startIcon={<NavigateBeforeIcon />}
-          onClick={() => onChapterChange('prev')}
-          disabled={!hasPrevChapter}
-        >
-          PREVIOUS
-        </Button>
-        <Button
-          endIcon={<NavigateNextIcon />}
-          onClick={() => onChapterChange('next')}
-          disabled={!hasNextChapter}
-        >
-          Next Chapter
-        </Button>
-      </Box>
+      {!navsHidden && (
+        <Box sx={{ 
+          p: 2, 
+          borderTop: 1, 
+          borderColor: 'divider',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          bgcolor: 'background.paper',
+          height: '56px',
+          boxSizing: 'border-box',
+          position: 'sticky',
+          bottom: 0,
+          zIndex: (theme) => theme.zIndex.drawer + 1
+        }}>
+          <Button
+            color="primary"
+            onClick={handleChapterClick}
+          >
+            {`CHAPTER ${currentChapter}`}
+          </Button>
+          {renderChapterMenu(chapterAnchorEl)}
+          
+          <Box>
+            <Button
+              startIcon={<NavigateBeforeIcon />}
+              onClick={() => onChapterChange('prev')}
+              disabled={!hasPrevChapter}
+            >
+              PREVIOUS
+            </Button>
+            <Button
+              endIcon={<NavigateNextIcon />}
+              onClick={() => onChapterChange('next')}
+              disabled={!hasNextChapter}
+            >
+              Next
+            </Button>
+          </Box>
+        </Box>
+      )}
 
       <Drawer
         anchor="right"
-        open={isCommentaryOpen}
+        open={isCommentaryDrawerOpen}
         onClose={handleCloseCommentary}
         sx={{
           '& .MuiDrawer-paper': {
@@ -226,6 +323,73 @@ export default function BibleReader({
             </Box>
           )}
           {!loading && commentary && <ReactMarkdown>{commentary.text}</ReactMarkdown>}
+        </Box>
+      </Drawer>
+
+      <Drawer
+        anchor="right"
+        open={isSearchDrawerOpen}
+        onClose={onCloseSearchDrawer}
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: { xs: '100%', sm: 480 },
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+          },
+        }}
+      >
+        <Box
+          sx={{
+            p: 2,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderBottom: 1,
+            borderColor: 'divider',
+            flexShrink: 0,
+          }}
+        >
+          <Typography variant="h6" component="div">
+            Search Results
+          </Typography>
+          <Box>
+            {searchResults.length > 0 && (
+              <IconButton color="inherit" onClick={handleCopySearchResults}>
+                <ContentCopyIcon />
+              </IconButton>
+            )}
+            <IconButton color="inherit" onClick={onCloseSearchDrawer}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Box>
+        <Box sx={{ flex: 1, overflowY: 'auto' }}>
+          {isSearchLoading && <Box sx={{display: 'flex', justifyContent: 'center', p: 4}}><ScaleLoader color={theme.palette.text.secondary} /></Box>}
+          {searchError && <Typography color="error" sx={{p: 2}}>{searchError}</Typography>}
+          {!isSearchLoading && !searchError && searchResults.length === 0 && (
+            <Typography color="text.secondary" sx={{p: 2}}>No results found.</Typography>
+          )}
+          {!isSearchLoading && !searchError && searchResults.length > 0 && (
+            <List>
+              {searchResults.map((result) => (
+                <ListItem
+                  button
+                  key={`${result.book}-${result.chapter}-${result.verse}`}
+                  onClick={() => handleSearchResultClick(result)}
+                  sx={{
+                    borderBottom: 1,
+                    borderColor: 'divider',
+                  }}
+                >
+                  <ListItemText
+                    secondary={`${result.book} ${result.chapter}:${result.verse}`}
+                    primary={result.text}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          )}
         </Box>
       </Drawer>
     </Box>

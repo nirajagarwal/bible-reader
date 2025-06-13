@@ -26,6 +26,13 @@ export interface Commentary {
   timestamp: number;
 }
 
+export interface SearchResult {
+  book: string;
+  chapter: number;
+  verse: number;
+  text: string;
+}
+
 export interface ReadingState {
   book: string;
   chapter: number;

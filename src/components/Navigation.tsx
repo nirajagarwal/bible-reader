@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -13,32 +13,39 @@ import {
   InputBase,
   Paper,
   IconButton,
+  useTheme,
+  useMediaQuery,
+  Collapse,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import CloseIcon from '@mui/icons-material/Close';
 import { fetchBibleStructure, getBookList, getChapterCount, BibleStructure } from '@/lib/bibleData';
 
 interface NavigationProps {
   currentBook: string;
-  currentChapter: number;
   onBookSelect: (book: string) => void;
-  onChapterSelect: (chapter: number) => void;
-  onSearch: (query: string) => void;
+  onSearch: () => void;
+  searchQuery: string;
+  onSearchQueryChange: (query: string) => void;
 }
 
 export default function Navigation({ 
   currentBook, 
-  currentChapter, 
   onBookSelect, 
-  onChapterSelect,
   onSearch,
+  searchQuery,
+  onSearchQueryChange,
 }: NavigationProps) {
   const [bible, setBible] = useState<BibleStructure | null>(null);
   const [otBooks, setOtBooks] = useState<string[]>([]);
   const [ntBooks, setNtBooks] = useState<string[]>([]);
   const [bookAnchorEl, setBookAnchorEl] = useState<null | HTMLElement>(null);
-  const [chapterAnchorEl, setChapterAnchorEl] = useState<null | HTMLElement>(null);
   const [tabValue, setTabValue] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchVisible, setSearchVisible] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     fetchBibleStructure().then((data) => {
@@ -55,31 +62,47 @@ export default function Navigation({
     });
   }, [currentBook]); // Rerun if currentBook changes, for initial load
 
+  useEffect(() => {
+    if (searchVisible) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+        searchInputRef.current?.select();
+      }, 100); // Delay to allow for CSS transition
+    }
+  }, [searchVisible]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        if (isMobile) {
+          setSearchVisible(false);
+        }
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMobile]);
+
   const handleSearchSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    onSearch(searchQuery);
+    onSearch();
+    if (isMobile) {
+      setSearchVisible(false);
+    }
   };
 
   const handleBookClick = (event: React.MouseEvent<HTMLElement>) => {
     setBookAnchorEl(event.currentTarget);
   };
 
-  const handleChapterClick = (event: React.MouseEvent<HTMLElement>) => {
-    setChapterAnchorEl(event.currentTarget);
-  };
-
   const handleClose = () => {
     setBookAnchorEl(null);
-    setChapterAnchorEl(null);
   };
 
   const handleBookSelect = (book: string) => {
     onBookSelect(book);
-    handleClose();
-  };
-
-  const handleChapterSelect = (chapter: number) => {
-    onChapterSelect(chapter);
     handleClose();
   };
 
@@ -145,91 +168,97 @@ export default function Navigation({
     </Menu>
   );
 
-  const renderChapterMenu = (anchorEl: HTMLElement | null) => {
-    if (!bible || !currentBook) return null;
-    const chapters = getChapterCount(bible, currentBook);
-    return (
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-        PaperProps={{
-          style: { maxHeight: '80vh', width: 'auto', minWidth: 300 },
-        }}
-      >
-        <Box sx={{ p: 2, display: 'flex', flexWrap: 'wrap', gap: 1, maxHeight: '70vh', overflow: 'auto' }}>
-          {Array.from({ length: chapters }, (_, i) => i + 1).map((chapter) => (
-            <Button
-              key={chapter}
-              variant="outlined"
-              size="small"
-              onClick={() => handleChapterSelect(chapter)}
-              sx={{ minWidth: 40, height: 40, borderRadius: '50%', p: 0 }}
-            >
-              {chapter}
-            </Button>
-          ))}
-        </Box>
-      </Menu>
-    );
-  };
-
   return (
     <AppBar 
       position="sticky" 
       color="default" 
-      elevation={1}
+      elevation={0}
       sx={{ 
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        backgroundColor: theme.palette.background.paper,
         '& .MuiToolbar-root': { minHeight: '48px', padding: '0 16px' },
         zIndex: (theme) => theme.zIndex.drawer + 1
       }}
     >
-      <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-        <Box>
-          <Button color="primary" onClick={handleBookClick}>
+      <Toolbar disableGutters sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            flex: '1 1 auto',
+            overflow: 'hidden',
+            minWidth: 0,
+          }}
+        >
+          <Button color="primary" onClick={handleBookClick} sx={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', minWidth: 0 }}>
             {currentBook}
           </Button>
-          {renderBookMenu(bookAnchorEl)}
         </Box>
         
-        <Box sx={{ 
-          position: 'relative',
-          width: { xs: '280px', sm: '320px', md: '480px' }
-        }}>
-          <Paper
-            component="form"
-            variant="outlined"
-            onSubmit={handleSearchSubmit}
-            sx={{ 
-              p: '2px 4px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              width: '100%',
-              borderRadius: '8px',
-              height: 38,
-            }}
-          >
-            <InputBase
-              sx={{ ml: 1, flex: 1 }}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search Bible..."
-            />
-            <IconButton 
-              type="submit" 
+        <Box 
+          ref={searchContainerRef}
+          sx={{ 
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            flex: '0 0 auto',
+          }}
+        >
+          <Collapse in={searchVisible || !isMobile} orientation="horizontal" timeout={300}>
+            <Paper
+              component="form"
+              elevation={0}
+              variant="outlined"
+              onSubmit={handleSearchSubmit}
               sx={{ 
-                p: '8px',
-                '&:hover': {
-                  backgroundColor: 'transparent',
-                },
-              }} 
-              aria-label="search"
+                p: '2px 4px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                width: isMobile ? '100%' : '280px',
+                maxWidth: '400px',
+                borderRadius: '8px',
+                height: 38,
+                transition: 'width 0.3s',
+                '&:focus-within': {
+                  width: isMobile ? '100%' : '320px',
+                }
+              }}
             >
+              <InputBase
+                sx={{ ml: 1, flex: 1 }}
+                inputRef={searchInputRef}
+                value={searchQuery}
+                onChange={(e) => onSearchQueryChange(e.target.value)}
+                placeholder="Search Bible..."
+              />
+              <IconButton 
+                type="submit" 
+                sx={{ p: '8px' }} 
+                aria-label="search"
+              >
+                <SearchIcon />
+              </IconButton>
+              {isMobile && (
+                <IconButton 
+                  onClick={() => {
+                    onSearchQueryChange('');
+                    setSearchVisible(false);
+                  }} 
+                  sx={{ p: '8px' }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              )}
+            </Paper>
+          </Collapse>
+          {isMobile && !searchVisible && (
+            <IconButton onClick={() => setSearchVisible(true)} sx={{ p: '8px' }}>
               <SearchIcon />
             </IconButton>
-          </Paper>
+          )}
         </Box>
       </Toolbar>
+      {renderBookMenu(bookAnchorEl)}
     </AppBar>
   );
 } 

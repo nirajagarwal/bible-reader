@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import { MongoClient } from 'mongodb';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+// In-memory cache
+const searchCache = new Map<string, { timestamp: number; results: any[] }>();
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const MONGO_URI = process.env.MONGODB_URI;
 const DB_NAME = 'knowra';
@@ -27,6 +31,12 @@ export async function POST(request: Request) {
 
     if (!query) {
       return NextResponse.json({ error: 'Search query is required' }, { status: 400 });
+    }
+
+    // Check cache first
+    const cachedEntry = searchCache.get(query);
+    if (cachedEntry && (Date.now() - cachedEntry.timestamp < CACHE_DURATION)) {
+      return NextResponse.json({ results: cachedEntry.results });
     }
 
     const db = await connectToDb();
@@ -63,6 +73,9 @@ export async function POST(request: Request) {
     ];
 
     const results = await collection.aggregate(pipeline).toArray();
+
+    // Store in cache
+    searchCache.set(query, { timestamp: Date.now(), results });
 
     return NextResponse.json({ results });
 

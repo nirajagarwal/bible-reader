@@ -23,6 +23,7 @@ export default function Home() {
   const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [isCommentaryDrawerOpen, setIsCommentaryDrawerOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Load bible structure and initial state
   useEffect(() => {
@@ -123,8 +124,9 @@ export default function Home() {
     setHighlightedVerse(verse);
   };
 
-  const handleSearch = async (query: string) => {
-    if (!query.trim()) return;
+  const handleSearch = async (query?: string) => {
+    const searchQueryToUse = typeof query === 'string' ? query : searchQuery;
+    if (!searchQueryToUse.trim()) return;
 
     setIsSearchLoading(true);
     setSearchError(null);
@@ -135,7 +137,7 @@ export default function Home() {
       const response = await fetch('/api/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query: searchQueryToUse }),
       });
 
       if (!response.ok) {
@@ -170,10 +172,10 @@ export default function Home() {
       {!navsHidden && (
         <Navigation
           currentBook={currentBook}
-          currentChapter={currentChapter}
           onBookSelect={handleBookSelect}
-          onChapterSelect={handleChapterSelect}
           onSearch={handleSearch}
+          searchQuery={searchQuery}
+          onSearchQueryChange={setSearchQuery}
         />
       )}
       <BibleReader

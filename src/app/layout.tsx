@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import "./globals.css"
-import { ThemeProvider } from '@mui/material/styles'
-import theme from '@/theme'
+import ThemeRegistry from '@/components/ThemeRegistry';
 import { SearchProvider } from '@/context/SearchContext'
-import CssBaseline from '@mui/material/CssBaseline'
 import { Analytics } from '@vercel/analytics/react'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -22,13 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider theme={theme}>
+        <ThemeRegistry>
           <SearchProvider>
-            <CssBaseline />
             {children}
             <Analytics />
           </SearchProvider>
-        </ThemeProvider>
+        </ThemeRegistry>
       </body>
     </html>
   )

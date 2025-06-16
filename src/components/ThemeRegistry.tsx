@@ -4,9 +4,6 @@ import { ReactNode, useMemo } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { Inter } from 'next/font/google';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export default function ThemeRegistry({ children }: { children: ReactNode }) {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -25,7 +22,7 @@ export default function ThemeRegistry({ children }: { children: ReactNode }) {
           },
         },
         typography: {
-          fontFamily: inter.style.fontFamily,
+          // The font is set globally in layout.tsx
         },
         components: {
           MuiButton: {

@@ -254,6 +254,7 @@ export default function BibleReader({
           '& .MuiDrawer-paper': {
             width: { xs: '100%', sm: 480 },
             boxSizing: 'border-box',
+            backgroundColor: theme.palette.background.paper,
           },
         }}
       >
@@ -304,6 +305,7 @@ export default function BibleReader({
             boxSizing: 'border-box',
             display: 'flex',
             flexDirection: 'column',
+            backgroundColor: theme.palette.background.paper,
           },
         }}
       >
@@ -368,6 +370,11 @@ export default function BibleReader({
         anchorEl={verseMenuAnchorEl}
         open={Boolean(verseMenuAnchorEl)}
         onClose={handleCloseVerseMenu}
+        PaperProps={{
+          sx: {
+            backgroundColor: theme.palette.background.paper,
+          }
+        }}
       >
         <MenuItem onClick={handleCommentaryClick}>Commentary</MenuItem>
         <MenuItem onClick={handleRelatedClick}>Related Verses</MenuItem>

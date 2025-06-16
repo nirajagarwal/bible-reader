@@ -1,40 +1,34 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import ThemeRegistry from '@/components/ThemeRegistry'
+import "./globals.css"
+import { ThemeProvider } from '@mui/material/styles'
+import theme from '@/theme'
+import { SearchProvider } from '@/context/SearchContext'
 import CssBaseline from '@mui/material/CssBaseline'
-import { Analytics } from '@vercel/analytics/next'
+import { Analytics } from '@vercel/analytics/react'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://berean-bible.vercel.app/'),
-  title: {
-    default: 'Berean Bible',
-    template: `%s | Berean Bible`,
-  },
-  description: 'Berean Bible reader with AI-powered semantic search and commentary.',
-  manifest: '/manifest.json',
-  keywords: ['berean', 'bible', 'reader', 'semantic', 'search', 'commentary', 'ai'],
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'default',
-    title: 'Berean Bible',
-  },
+  title: 'Bible Reader',
+  description: 'A simple bible reader app',
 }
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeRegistry>
-          <CssBaseline />
-          {children}
-          <Analytics />
-        </ThemeRegistry>
+        <ThemeProvider theme={theme}>
+          <SearchProvider>
+            <CssBaseline />
+            {children}
+            <Analytics />
+          </SearchProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

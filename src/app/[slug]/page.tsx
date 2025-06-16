@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, useEffect, useMemo } from 'react';
+import { Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { Box } from '@mui/material';
 import Navigation from '@/components/Navigation';
@@ -8,8 +8,11 @@ import BibleReader from '@/components/BibleReader';
 import { Verse, ReadingState, SearchResult } from '@/types/bible';
 import localforage from 'localforage';
 import { getChapterCount, fetchBibleStructure, getBookList } from '@/lib/bibleData';
+import { useState, useEffect, useMemo } from 'react';
+import { useSearch } from '@/context/SearchContext';
 
-function Home() {
+function BiblePage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
   const router = useRouter();
   const [currentBook, setCurrentBook] = useState('Genesis');
   const [currentChapter, setCurrentChapter] = useState(1);
@@ -25,29 +28,23 @@ function Home() {
   const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [isCommentaryDrawerOpen, setIsCommentaryDrawerOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const { searchQuery, setSearchQuery } = useSearch();
 
-  // Load bible structure and initial state
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load bible structure once
   useEffect(() => {
-    const initializeApp = async () => {
+    const loadStructure = async () => {
       try {
         const structure = await fetchBibleStructure();
         setBibleStructure(structure);
-        
-        const savedState = await localforage.getItem<ReadingState>('readingState');
-        if (savedState) {
-          setCurrentBook(savedState.book);
-          setCurrentChapter(savedState.chapter);
-        }
-        setIsInitialized(true);
       } catch (error) {
-        console.error('Error initializing app:', error);
-        setBibleStructure({}); // Avoids being stuck in a loading state
-        setIsInitialized(true);
+        console.error('Error loading bible structure:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
-
-    initializeApp();
+    loadStructure();
   }, []);
 
   const { otBooks, ntBooks } = useMemo(() => {
@@ -59,7 +56,51 @@ function Home() {
     };
   }, [bibleStructure]);
 
+  // Set view state based on URL slug
   useEffect(() => {
+    if (!bibleStructure) return;
+
+    const parts = slug.split('-');
+    let verse: number | null = null;
+    let chapter: number | null = null;
+    let bookParts: string[] = [];
+
+    if (parts.length > 0 && !isNaN(parseInt(parts[parts.length - 1]))) {
+        const lastPart = parseInt(parts.pop() as string);
+        if (parts.length > 0 && !isNaN(parseInt(parts[parts.length - 1]))) {
+            verse = lastPart;
+            chapter = parseInt(parts.pop() as string);
+            bookParts = parts;
+        } else {
+            chapter = lastPart;
+            bookParts = parts;
+        }
+    } else {
+        bookParts = parts;
+        chapter = 1;
+    }
+
+    const book = bookParts.join(' ');
+    const bookList = getBookList(bibleStructure);
+
+    const foundBook = bookList.find(b => b.toLowerCase() === book.toLowerCase());
+
+    if (foundBook) {
+      const chapterCount = getChapterCount(bibleStructure, foundBook);
+      if (chapter && chapter > 0 && chapter <= chapterCount) {
+        setCurrentBook(foundBook);
+        setCurrentChapter(chapter);
+        setHighlightedVerse(verse);
+      }
+    }
+    
+    if (!isInitialized) {
+      setIsInitialized(true);
+    }
+  }, [slug, bibleStructure, isInitialized]);
+
+  useEffect(() => {
+    // Save reading state only after initialization
     if (isInitialized) {
       const saveState = async () => {
         await localforage.setItem('readingState', {
@@ -73,8 +114,9 @@ function Home() {
   }, [currentBook, currentChapter, isInitialized]);
 
   useEffect(() => {
-    if (!isInitialized || !bibleStructure) return;
+    // Load verses for current book and chapter
     const loadVerses = async () => {
+      if (!currentBook) return;
       try {
         const response = await fetch(`/api/verses?book=${currentBook}&chapter=${currentChapter}`);
         if (!response.ok) throw new Error('Failed to fetch verses');
@@ -85,8 +127,9 @@ function Home() {
       }
     };
     loadVerses();
-  }, [currentBook, currentChapter, isInitialized, bibleStructure]);
+  }, [currentBook, currentChapter]);
 
+  // Update chapter navigation state whenever book, chapter, or bible structure changes
   useEffect(() => {
     if (!bibleStructure || !currentBook) return;
 
@@ -97,23 +140,23 @@ function Home() {
   }, [currentBook, currentChapter, bibleStructure]);
 
   const handleBookSelect = (book: string) => {
-    const newSlug = `${book.replace(/ /g, '-')}-1`;
+    const newSlug = `${book.replace(/ /g, '-').toLowerCase()}-1`;
     router.push(`/${newSlug}`);
   };
 
   const handleChapterSelect = (chapter: number) => {
-    const newSlug = `${currentBook.replace(/ /g, '-')}-${chapter}`;
+    const newSlug = `${currentBook.replace(/ /g, '-').toLowerCase()}-${chapter}`;
     router.push(`/${newSlug}`);
   };
 
   const handleChapterChange = (direction: 'next' | 'prev') => {
-    const newChapter = currentChapter + (direction === 'next' ? 1 : -1);
-    const newSlug = `${currentBook.replace(/ /g, '-')}-${newChapter}`;
+    const newChapter = direction === 'next' ? currentChapter + 1 : currentChapter - 1;
+    const newSlug = `${currentBook.replace(/ /g, '-').toLowerCase()}-${newChapter}`;
     router.push(`/${newSlug}`);
   };
 
   const handleVerseSelectFromSearch = (book: string, chapter: number, verse: number) => {
-    const newSlug = `${book.replace(/ /g, '-')}-${chapter}-${verse}`;
+    const newSlug = `${book.replace(/ /g, '-').toLowerCase()}-${chapter}-${verse}`;
     router.push(`/${newSlug}`);
   };
 
@@ -162,7 +205,7 @@ function Home() {
 
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {!navsHidden && (
+      {!navsHidden && !isLoading && (
         <Navigation
           currentBook={currentBook}
           onBookSelect={handleBookSelect}
@@ -203,10 +246,10 @@ function Home() {
   );
 }
 
-export default function HomePage() {
+export default function SlugPage({ params }: { params: { slug: string } }) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <Home />
+      <BiblePage params={params} />
     </Suspense>
   );
 } 

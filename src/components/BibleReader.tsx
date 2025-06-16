@@ -10,6 +10,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  MenuItem,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
@@ -65,7 +66,7 @@ export default function BibleReader({
   const [commentary, setCommentary] = useState<Commentary | null>(null);
   const [loading, setLoading] = useState(false);
   const [commentaryError, setCommentaryError] = useState<string | null>(null);
-  const [chapterAnchorEl, setChapterAnchorEl] = useState<null | HTMLElement>(null);
+  const [verseMenuAnchorEl, setVerseMenuAnchorEl] = useState<null | HTMLElement>(null);
   const highlightedVerseRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -102,8 +103,19 @@ export default function BibleReader({
     };
   }, [onChapterChange, hasNextChapter, hasPrevChapter, isCommentaryDrawerOpen, isSearchDrawerOpen]);
 
-  const handleVerseClick = async (verse: Verse) => {
+  const handleVerseClick = (event: React.MouseEvent<HTMLElement>, verse: Verse) => {
     setSelectedVerse(verse);
+    setVerseMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseVerseMenu = () => {
+    setVerseMenuAnchorEl(null);
+  };
+
+  const handleCommentaryClick = async () => {
+    if (!selectedVerse) return;
+
+    handleCloseVerseMenu();
     setCommentary(null);
     setCommentaryError(null);
     onCommentaryDrawerOpen();
@@ -116,10 +128,10 @@ export default function BibleReader({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          book: verse.book,
-          chapter: verse.chapter,
-          verse: verse.verse,
-          text: verse.text 
+          book: selectedVerse.book,
+          chapter: selectedVerse.chapter,
+          verse: selectedVerse.verse,
+          text: selectedVerse.text 
         }),
       });
 
@@ -129,12 +141,10 @@ export default function BibleReader({
         throw new Error(data.error || 'Failed to fetch commentary');
       }
       
-      // The API now directly returns the commentary text.
-      // We'll create a Commentary object on the client side.
       const newCommentary: Commentary = {
-        verse: verse.text,
+        verse: selectedVerse.text,
         text: data.commentary,
-        timestamp: Date.now(), // Still useful for display logic if needed
+        timestamp: Date.now(),
       };
 
       setCommentary(newCommentary);
@@ -148,6 +158,13 @@ export default function BibleReader({
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRelatedClick = () => {
+    if (selectedVerse) {
+      onFindRelated(selectedVerse.text);
+    }
+    handleCloseVerseMenu();
   };
 
   const handleCloseCommentary = () => {
@@ -164,17 +181,8 @@ export default function BibleReader({
     }
   };
 
-  const handleChapterClick = (event: React.MouseEvent<HTMLElement>) => {
-    setChapterAnchorEl(event.currentTarget);
-  };
-
-  const handleChapterClose = () => {
-    setChapterAnchorEl(null);
-  };
-
   const handleChapterSelect = (chapter: number) => {
     onChapterSelect(chapter);
-    handleChapterClose();
   };
 
   const handleSearchResultClick = (result: SearchResult) => {
@@ -185,34 +193,6 @@ export default function BibleReader({
   const handleCopySearchResults = () => {
     const textToCopy = searchResults.map(r => `${r.book} ${r.chapter}:${r.verse} - ${r.text}`).join('\n\n');
     navigator.clipboard.writeText(textToCopy);
-  };
-
-  const renderChapterMenu = (anchorEl: HTMLElement | null) => {
-    if (!verses.length) return null;
-    return (
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleChapterClose}
-        PaperProps={{
-          style: { maxHeight: '80vh', width: 'auto', minWidth: 300 },
-        }}
-      >
-        <Box sx={{ p: 2, display: 'flex', flexWrap: 'wrap', gap: 1, maxHeight: '70vh', overflow: 'auto' }}>
-          {Array.from({ length: totalChapters }, (_, i) => i + 1).map((chapter) => (
-            <Button
-              key={chapter}
-              variant="outlined"
-              size="small"
-              onClick={() => handleChapterSelect(chapter)}
-              sx={{ minWidth: 40, height: 40, borderRadius: '50%', p: 0 }}
-            >
-              {chapter}
-            </Button>
-          ))}
-        </Box>
-      </Menu>
-    );
   };
 
   const navsHidden = isSearchDrawerOpen || isCommentaryDrawerOpen;
@@ -231,7 +211,6 @@ export default function BibleReader({
           overflow: 'auto',
           p: 2,
           '& > *': { mb: 2 },
-          pb: navsHidden ? 2 : '72px', // Padding for the bottom nav
         }}
       >
         {verses.map((verse) => (
@@ -247,7 +226,7 @@ export default function BibleReader({
               fontWeight: verse.verse === highlightedVerse ? 'bold' : 'normal',
               border: `1px solid ${verse.verse === highlightedVerse ? theme.palette.divider : 'transparent'}`,
             }}
-            onClick={() => handleVerseClick(verse)}
+            onClick={(event) => handleVerseClick(event, verse)}
           >
             <Typography
               component="sup"
@@ -267,50 +246,6 @@ export default function BibleReader({
         ))}
       </Box>
 
-      {!navsHidden && (
-        <Box sx={{ 
-          p: 2, 
-          borderTop: 1, 
-          borderColor: 'divider',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          bgcolor: 'background.paper',
-          height: '56px',
-          boxSizing: 'border-box',
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          zIndex: (theme) => theme.zIndex.drawer + 1
-        }}>
-          <Button
-            color="primary"
-            onClick={handleChapterClick}
-          >
-            {`CHAPTER ${currentChapter}`}
-          </Button>
-          {renderChapterMenu(chapterAnchorEl)}
-          
-          <Box>
-            <Button
-              startIcon={<NavigateBeforeIcon />}
-              onClick={() => onChapterChange('prev')}
-              disabled={!hasPrevChapter}
-            >
-              PREVIOUS
-            </Button>
-            <Button
-              endIcon={<NavigateNextIcon />}
-              onClick={() => onChapterChange('next')}
-              disabled={!hasNextChapter}
-            >
-              Next
-            </Button>
-          </Box>
-        </Box>
-      )}
-
       <Drawer
         anchor="right"
         open={isCommentaryDrawerOpen}
@@ -324,7 +259,8 @@ export default function BibleReader({
       >
         <Box
           sx={{
-            p: 2,
+            px: 2,
+            py: 1,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -334,19 +270,16 @@ export default function BibleReader({
           }}
         >
           <Typography variant="h6" component="div">
-            Commentary
+            {loading ? 'Generating...' : 'Commentary'}
           </Typography>
           <Box>
-            <Button color="primary" onClick={handleFindRelated} sx={{ mr: 1 }}>
-              Related
-            </Button>
             <IconButton onClick={handleCloseCommentary}>
               <CloseIcon />
             </IconButton>
           </Box>
         </Box>
         
-        <Box sx={{ flex: 1, p: 3, overflowY: 'auto' }}>
+        <Box sx={{ flex: 1, p:2, pt:0, overflowY: 'auto' }}>
           {loading && (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
               <ScaleLoader color={theme.palette.text.secondary} />
@@ -376,7 +309,8 @@ export default function BibleReader({
       >
         <Box
           sx={{
-            p: 2,
+            px: 2,
+            py: 1,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -401,12 +335,12 @@ export default function BibleReader({
         </Box>
         <Box sx={{ flex: 1, overflowY: 'auto' }}>
           {isSearchLoading && <Box sx={{display: 'flex', justifyContent: 'center', p: 4}}><ScaleLoader color={theme.palette.text.secondary} /></Box>}
-          {searchError && <Typography color="error" sx={{p: 2}}>{searchError}</Typography>}
+          {searchError && <Typography color="error" sx={{px: 2}}>{searchError}</Typography>}
           {!isSearchLoading && !searchError && searchResults.length === 0 && (
-            <Typography color="text.secondary" sx={{p: 2}}>No results found.</Typography>
+            <Typography color="text.secondary" sx={{px: 2, py:1}}>No results found.</Typography>
           )}
           {!isSearchLoading && !searchError && searchResults.length > 0 && (
-            <List>
+            <List sx={{p: 0}}>
               {searchResults.map((result) => (
                 <ListItem
                   button
@@ -415,6 +349,8 @@ export default function BibleReader({
                   sx={{
                     borderBottom: 1,
                     borderColor: 'divider',
+                    px: 2,
+                    py: 0,
                   }}
                 >
                   <ListItemText
@@ -427,6 +363,15 @@ export default function BibleReader({
           )}
         </Box>
       </Drawer>
+
+      <Menu
+        anchorEl={verseMenuAnchorEl}
+        open={Boolean(verseMenuAnchorEl)}
+        onClose={handleCloseVerseMenu}
+      >
+        <MenuItem onClick={handleCommentaryClick}>Commentary</MenuItem>
+        <MenuItem onClick={handleRelatedClick}>Related Verses</MenuItem>
+      </Menu>
     </Box>
   );
 } 

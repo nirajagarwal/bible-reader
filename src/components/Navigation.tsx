@@ -19,6 +19,8 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import { fetchBibleStructure, getBookList, getChapterCount, BibleStructure } from '@/lib/bibleData';
 
 interface NavigationProps {
@@ -27,6 +29,14 @@ interface NavigationProps {
   onSearch: () => void;
   searchQuery: string;
   onSearchQueryChange: (query: string) => void;
+  onChapterChange: (direction: 'next' | 'prev') => void;
+  hasNextChapter: boolean;
+  hasPrevChapter: boolean;
+  currentChapter: number;
+  onChapterSelect: (chapter: number) => void;
+  totalChapters: number;
+  otBooks: string[];
+  ntBooks: string[];
 }
 
 export default function Navigation({ 
@@ -35,74 +45,56 @@ export default function Navigation({
   onSearch,
   searchQuery,
   onSearchQueryChange,
+  onChapterChange,
+  hasNextChapter,
+  hasPrevChapter,
+  currentChapter,
+  onChapterSelect,
+  totalChapters,
+  otBooks,
+  ntBooks
 }: NavigationProps) {
-  const [bible, setBible] = useState<BibleStructure | null>(null);
-  const [otBooks, setOtBooks] = useState<string[]>([]);
-  const [ntBooks, setNtBooks] = useState<string[]>([]);
   const [bookAnchorEl, setBookAnchorEl] = useState<null | HTMLElement>(null);
+  const [chapterAnchorEl, setChapterAnchorEl] = useState<null | HTMLElement>(null);
   const [tabValue, setTabValue] = useState(0);
-  const [searchVisible, setSearchVisible] = useState(false);
-  const searchContainerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    fetchBibleStructure().then((data) => {
-      setBible(data);
-      const books = getBookList(data);
-      const ot = books.slice(0, 39);
-      const nt = books.slice(39);
-      setOtBooks(ot);
-      setNtBooks(nt);
-      // Set initial tab based on current book
-      if (ntBooks.includes(currentBook)) {
-        setTabValue(1);
-      }
-    });
-  }, [currentBook]); // Rerun if currentBook changes, for initial load
-
-  useEffect(() => {
-    if (searchVisible) {
-      setTimeout(() => {
-        searchInputRef.current?.focus();
-        searchInputRef.current?.select();
-      }, 100); // Delay to allow for CSS transition
+    // Set initial tab based on current book
+    if (ntBooks.includes(currentBook)) {
+      setTabValue(1);
+    } else {
+      setTabValue(0);
     }
-  }, [searchVisible]);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
-        if (isMobile) {
-          setSearchVisible(false);
-        }
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isMobile]);
+  }, [currentBook, ntBooks]);
 
   const handleSearchSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     onSearch();
-    if (isMobile) {
-      setSearchVisible(false);
-    }
   };
 
   const handleBookClick = (event: React.MouseEvent<HTMLElement>) => {
     setBookAnchorEl(event.currentTarget);
   };
 
+  const handleChapterClick = (event: React.MouseEvent<HTMLElement>) => {
+    setChapterAnchorEl(event.currentTarget);
+  };
+
   const handleClose = () => {
     setBookAnchorEl(null);
+    setChapterAnchorEl(null);
   };
 
   const handleBookSelect = (book: string) => {
     onBookSelect(book);
+    handleClose();
+  };
+
+  const handleChapterSelect = (chapter: number) => {
+    onChapterSelect(chapter);
     handleClose();
   };
 
@@ -138,7 +130,7 @@ export default function Navigation({
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
-                  width: '100%'
+                  width: '100%',
                 }}
               >
                 {book}
@@ -168,6 +160,33 @@ export default function Navigation({
     </Menu>
   );
 
+  const renderChapterMenu = (anchorEl: HTMLElement | null) => {
+    return (
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        PaperProps={{
+          style: { maxHeight: '80vh', width: 'auto', minWidth: 300 },
+        }}
+      >
+        <Box sx={{ p: 2, display: 'flex', flexWrap: 'wrap', gap: 1, maxHeight: '70vh', overflow: 'auto' }}>
+          {Array.from({ length: totalChapters }, (_, i) => i + 1).map((chapter) => (
+            <Button
+              key={chapter}
+              variant="contained"
+              size="small"
+              onClick={() => handleChapterSelect(chapter)}
+              sx={{ minWidth: 40, height: 40, p: 0 }}
+            >
+              {chapter}
+            </Button>
+          ))}
+        </Box>
+      </Menu>
+    );
+  };
+
   return (
     <AppBar 
       position="sticky" 
@@ -176,89 +195,109 @@ export default function Navigation({
       sx={{ 
         borderBottom: `1px solid ${theme.palette.divider}`,
         backgroundColor: theme.palette.background.paper,
-        '& .MuiToolbar-root': { minHeight: '48px', padding: '0 16px' },
+        '& .MuiToolbar-root': { minHeight: '48px' },
         zIndex: (theme) => theme.zIndex.drawer + 1
       }}
     >
-      <Toolbar disableGutters sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+      <Toolbar disableGutters sx={{ justifyContent: 'space-between', alignItems: 'center', px: { xs: 0.5, sm: 2 } }}>
         <Box 
           sx={{ 
             display: 'flex', 
             alignItems: 'center', 
-            flex: '1 1 auto',
+            flex: '1 0 auto',
             overflow: 'hidden',
             minWidth: 0,
           }}
         >
-          <Button color="primary" onClick={handleBookClick} sx={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', minWidth: 0 }}>
+          <Button 
+            variant="contained"
+            onClick={handleBookClick} 
+            sx={{ 
+              textOverflow: 'ellipsis', 
+              overflow: 'hidden', 
+              whiteSpace: 'nowrap', 
+              minWidth: 0, 
+              display: 'block',
+              maxWidth: { xs: '120px', sm: '200px' }
+            }}
+          >
             {currentBook}
+          </Button>
+          <Button 
+            variant="contained"
+            onClick={handleChapterClick}
+            sx={{
+              minWidth: 36,
+              height: 36,
+              p: 0,
+              ml: { xs: 0.5, sm: 1 }
+            }}
+          >
+            {currentChapter}
           </Button>
         </Box>
         
         <Box 
-          ref={searchContainerRef}
           sx={{ 
             display: 'flex',
-            justifyContent: 'flex-end',
+            justifyContent: 'center',
             alignItems: 'center',
-            flex: '0 0 auto',
+            flex: '1 1 100%',
+            mx: { xs: 0.5, sm: 1 },
           }}
         >
-          <Collapse in={searchVisible || !isMobile} orientation="horizontal" timeout={300}>
-            <Paper
-              component="form"
-              elevation={0}
-              variant="outlined"
-              onSubmit={handleSearchSubmit}
-              sx={{ 
-                p: '2px 4px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                width: isMobile ? '100%' : '280px',
-                maxWidth: '400px',
-                borderRadius: '8px',
-                height: 38,
-                transition: 'width 0.3s',
-                '&:focus-within': {
-                  width: isMobile ? '100%' : '320px',
-                }
-              }}
+          <Paper
+            component="form"
+            elevation={0}
+            variant="outlined"
+            onSubmit={handleSearchSubmit}
+            sx={{ 
+              p: '2px 4px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              width: '100%',
+              maxWidth: '400px',
+              borderRadius: '8px',
+              height: 38,
+            }}
+          >
+            <IconButton 
+              type="submit" 
+              sx={{ p: { xs: '2px', sm: '4px' } }} 
+              aria-label="search"
             >
-              <InputBase
-                sx={{ ml: 1, flex: 1 }}
-                inputRef={searchInputRef}
-                value={searchQuery}
-                onChange={(e) => onSearchQueryChange(e.target.value)}
-                placeholder="Search Bible..."
-              />
-              <IconButton 
-                type="submit" 
-                sx={{ p: '8px' }} 
-                aria-label="search"
-              >
-                <SearchIcon />
-              </IconButton>
-              {isMobile && (
-                <IconButton 
-                  onClick={() => {
-                    onSearchQueryChange('');
-                    setSearchVisible(false);
-                  }} 
-                  sx={{ p: '8px' }}
-                >
-                  <CloseIcon />
-                </IconButton>
-              )}
-            </Paper>
-          </Collapse>
-          {isMobile && !searchVisible && (
-            <IconButton onClick={() => setSearchVisible(true)} sx={{ p: '8px' }}>
-              <SearchIcon />
+              <SearchIcon sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }} />
             </IconButton>
-          )}
+            <InputBase
+              sx={{ ml: { xs: 0.5, sm: 1 }, flex: 1 }}
+              inputRef={searchInputRef}
+              value={searchQuery}
+              onChange={(e) => onSearchQueryChange(e.target.value)}
+            />
+          </Paper>
+        </Box>
+
+        <Box sx={{ flex: '1 0 auto', display: 'flex', justifyContent: 'flex-end' }}>
+          <Button 
+            variant="contained"
+            onClick={() => onChapterChange('prev')} 
+            disabled={!hasPrevChapter}
+            sx={{ minWidth: 36, height: 36, p: 0 }}
+          >
+            <NavigateBeforeIcon />
+          </Button>
+          <Button 
+            variant="contained"
+            onClick={() => onChapterChange('next')} 
+            disabled={!hasNextChapter}
+            sx={{ minWidth: 36, height: 36, p: 0, ml: { xs: 0.5, sm: 1 } }}
+          >
+            <NavigateNextIcon />
+          </Button>
         </Box>
       </Toolbar>
       {renderBookMenu(bookAnchorEl)}
+      {renderChapterMenu(chapterAnchorEl)}
     </AppBar>
   );
 } 

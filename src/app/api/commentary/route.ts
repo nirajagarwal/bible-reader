@@ -97,9 +97,9 @@ export async function POST(request: Request) {
             parts: [
               {
                 text: `You are a Bible scholar that can synthesize diverse points of view into a modern and insightful commentary. 
-                Please provide a structured commentary on the following verse. 
+                Please provide a structured commentary on the following verse using paragraphs and upto 3 levels of headings. Avoid using lists. 
                 Where relevant, point out related verses or themes in the Bible to add context.
-                Just the content, no preamble or postamble. When lists are used, they should not be multi-level but single level.
+                Just the content, no preamble or postamble.
                 Verse: ${text}`
               }
             ]

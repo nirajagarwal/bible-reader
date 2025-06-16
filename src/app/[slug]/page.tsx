@@ -14,15 +14,14 @@ import { useSearch } from '@/context/SearchContext';
 function BiblePage({ params }: { params: { slug: string } }) {
   const { slug } = params;
   const router = useRouter();
-  const [currentBook, setCurrentBook] = useState('Genesis');
-  const [currentChapter, setCurrentChapter] = useState(1);
+  const [currentBook, setCurrentBook] = useState<string | null>(null);
+  const [currentChapter, setCurrentChapter] = useState<number | null>(null);
   const [verses, setVerses] = useState<Verse[]>([]);
   const [hasNextChapter, setHasNextChapter] = useState(false);
   const [hasPrevChapter, setHasPrevChapter] = useState(false);
   const [bibleStructure, setBibleStructure] = useState<any>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
   const [highlightedVerse, setHighlightedVerse] = useState<number | null>(null);
-  const [totalChapters, setTotalChapters] = useState(1);
+  const [totalChapters, setTotalChapters] = useState(0);
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
@@ -40,7 +39,6 @@ function BiblePage({ params }: { params: { slug: string } }) {
         setBibleStructure(structure);
       } catch (error) {
         console.error('Error loading bible structure:', error);
-      } finally {
         setIsLoading(false);
       }
     };
@@ -85,38 +83,36 @@ function BiblePage({ params }: { params: { slug: string } }) {
 
     const foundBook = bookList.find(b => b.toLowerCase() === book.toLowerCase());
 
-    if (foundBook) {
+    if (foundBook && chapter) {
       const chapterCount = getChapterCount(bibleStructure, foundBook);
-      if (chapter && chapter > 0 && chapter <= chapterCount) {
+      if (chapter > 0 && chapter <= chapterCount) {
         setCurrentBook(foundBook);
         setCurrentChapter(chapter);
         setHighlightedVerse(verse);
-      }
-    }
-    
-    if (!isInitialized) {
-      setIsInitialized(true);
-    }
-  }, [slug, bibleStructure, isInitialized]);
+        setTotalChapters(chapterCount);
+        setHasNextChapter(chapter < chapterCount);
+        setHasPrevChapter(chapter > 1);
 
-  useEffect(() => {
-    // Save reading state only after initialization
-    if (isInitialized) {
-      const saveState = async () => {
-        await localforage.setItem('readingState', {
-          book: currentBook,
-          chapter: currentChapter,
+        localforage.setItem('readingState', {
+          book: foundBook,
+          chapter: chapter,
           scrollPosition: 0,
         });
-      };
-      saveState();
+
+        setIsLoading(false);
+      } else {
+        const newSlug = `${foundBook.replace(/ /g, '-').toLowerCase()}-1`;
+        router.replace(`/${newSlug}`);
+      }
+    } else {
+        router.replace('/genesis-1');
     }
-  }, [currentBook, currentChapter, isInitialized]);
+  }, [slug, bibleStructure, router]);
 
   useEffect(() => {
     // Load verses for current book and chapter
     const loadVerses = async () => {
-      if (!currentBook) return;
+      if (!currentBook || !currentChapter) return;
       try {
         const response = await fetch(`/api/verses?book=${currentBook}&chapter=${currentChapter}`);
         if (!response.ok) throw new Error('Failed to fetch verses');
@@ -129,27 +125,19 @@ function BiblePage({ params }: { params: { slug: string } }) {
     loadVerses();
   }, [currentBook, currentChapter]);
 
-  // Update chapter navigation state whenever book, chapter, or bible structure changes
-  useEffect(() => {
-    if (!bibleStructure || !currentBook) return;
-
-    const chapters = getChapterCount(bibleStructure, currentBook);
-    setTotalChapters(chapters);
-    setHasNextChapter(currentChapter < chapters);
-    setHasPrevChapter(currentChapter > 1);
-  }, [currentBook, currentChapter, bibleStructure]);
-
   const handleBookSelect = (book: string) => {
     const newSlug = `${book.replace(/ /g, '-').toLowerCase()}-1`;
     router.push(`/${newSlug}`);
   };
 
   const handleChapterSelect = (chapter: number) => {
+    if (!currentBook) return;
     const newSlug = `${currentBook.replace(/ /g, '-').toLowerCase()}-${chapter}`;
     router.push(`/${newSlug}`);
   };
 
   const handleChapterChange = (direction: 'next' | 'prev') => {
+    if (!currentBook || !currentChapter) return;
     const newChapter = direction === 'next' ? currentChapter + 1 : currentChapter - 1;
     const newSlug = `${currentBook.replace(/ /g, '-').toLowerCase()}-${newChapter}`;
     router.push(`/${newSlug}`);
@@ -228,9 +216,6 @@ function BiblePage({ params }: { params: { slug: string } }) {
         hasNextChapter={hasNextChapter}
         hasPrevChapter={hasPrevChapter}
         highlightedVerse={highlightedVerse}
-        currentChapter={currentChapter}
-        onChapterSelect={handleChapterSelect}
-        totalChapters={totalChapters}
         onVerseSelectFromSearch={handleVerseSelectFromSearch}
         isSearchDrawerOpen={isSearchDrawerOpen}
         onCloseSearchDrawer={handleCloseSearchDrawer}

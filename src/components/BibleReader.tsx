@@ -27,9 +27,6 @@ interface BibleReaderProps {
   hasNextChapter: boolean;
   hasPrevChapter: boolean;
   highlightedVerse: number | null;
-  currentChapter: number;
-  onChapterSelect: (chapter: number) => void;
-  totalChapters: number;
   onVerseSelectFromSearch: (book: string, chapter: number, verse: number) => void;
   isSearchDrawerOpen: boolean;
   onCloseSearchDrawer: () => void;
@@ -48,9 +45,6 @@ export default function BibleReader({
   hasNextChapter,
   hasPrevChapter,
   highlightedVerse,
-  currentChapter,
-  onChapterSelect,
-  totalChapters,
   onVerseSelectFromSearch,
   isSearchDrawerOpen,
   onCloseSearchDrawer,
@@ -66,7 +60,11 @@ export default function BibleReader({
   const [commentary, setCommentary] = useState<Commentary | null>(null);
   const [loading, setLoading] = useState(false);
   const [commentaryError, setCommentaryError] = useState<string | null>(null);
-  const [verseMenuAnchorEl, setVerseMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [contextMenu, setContextMenu] =
+    useState<{
+      mouseX: number;
+      mouseY: number;
+    } | null>(null);
   const highlightedVerseRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -103,13 +101,17 @@ export default function BibleReader({
     };
   }, [onChapterChange, hasNextChapter, hasPrevChapter, isCommentaryDrawerOpen, isSearchDrawerOpen]);
 
-  const handleVerseClick = (event: React.MouseEvent<HTMLElement>, verse: Verse) => {
+  const handleVerseClick = (event: React.MouseEvent, verse: Verse) => {
+    event.preventDefault();
     setSelectedVerse(verse);
-    setVerseMenuAnchorEl(event.currentTarget);
+    setContextMenu({
+      mouseX: event.clientX,
+      mouseY: event.clientY,
+    });
   };
 
   const handleCloseVerseMenu = () => {
-    setVerseMenuAnchorEl(null);
+    setContextMenu(null);
   };
 
   const handleCommentaryClick = async () => {
@@ -181,10 +183,6 @@ export default function BibleReader({
     }
   };
 
-  const handleChapterSelect = (chapter: number) => {
-    onChapterSelect(chapter);
-  };
-
   const handleSearchResultClick = (result: SearchResult) => {
     onVerseSelectFromSearch(result.book, result.chapter, result.verse);
     onCloseSearchDrawer();
@@ -209,7 +207,7 @@ export default function BibleReader({
         sx={{
           flex: 1,
           overflow: 'auto',
-          p: 2,
+          p: 0,
           '& > *': { mb: 2 },
         }}
       >
@@ -221,10 +219,10 @@ export default function BibleReader({
             sx={{
               cursor: 'pointer',
               '&:hover': { backgroundColor: 'action.hover' },
-              p: 1,
-              borderRadius: 2,
+              px: 2, py: 0.5,
+              borderRadius: 0,
               fontWeight: verse.verse === highlightedVerse ? 'bold' : 'normal',
-              border: `1px solid ${verse.verse === highlightedVerse ? theme.palette.divider : 'transparent'}`,
+              border: `1px solid ${verse.verse === highlightedVerse ? 'orange' : 'transparent'}`,
             }}
             onClick={(event) => handleVerseClick(event, verse)}
           >
@@ -367,9 +365,14 @@ export default function BibleReader({
       </Drawer>
 
       <Menu
-        anchorEl={verseMenuAnchorEl}
-        open={Boolean(verseMenuAnchorEl)}
+        open={contextMenu !== null}
         onClose={handleCloseVerseMenu}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          contextMenu !== null
+            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+            : undefined
+        }
         PaperProps={{
           sx: {
             backgroundColor: theme.palette.background.paper,

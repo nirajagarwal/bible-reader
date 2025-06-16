@@ -24,7 +24,7 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import { fetchBibleStructure, getBookList, getChapterCount, BibleStructure } from '@/lib/bibleData';
 
 interface NavigationProps {
-  currentBook: string;
+  currentBook: string | null;
   onBookSelect: (book: string) => void;
   onSearch: () => void;
   searchQuery: string;
@@ -32,7 +32,7 @@ interface NavigationProps {
   onChapterChange: (direction: 'next' | 'prev') => void;
   hasNextChapter: boolean;
   hasPrevChapter: boolean;
-  currentChapter: number;
+  currentChapter: number | null;
   onChapterSelect: (chapter: number) => void;
   totalChapters: number;
   otBooks: string[];
@@ -63,7 +63,7 @@ export default function Navigation({
 
   useEffect(() => {
     // Set initial tab based on current book
-    if (ntBooks.includes(currentBook)) {
+    if (currentBook && ntBooks.includes(currentBook)) {
       setTabValue(1);
     } else {
       setTabValue(0);
@@ -209,32 +209,36 @@ export default function Navigation({
             minWidth: 0,
           }}
         >
-          <Button 
-            variant="contained"
-            onClick={handleBookClick} 
-            sx={{ 
-              textOverflow: 'ellipsis', 
-              overflow: 'hidden', 
-              whiteSpace: 'nowrap', 
-              minWidth: 0, 
-              display: 'block',
-              maxWidth: { xs: '120px', sm: '200px' }
-            }}
-          >
-            {currentBook}
-          </Button>
-          <Button 
-            variant="contained"
-            onClick={handleChapterClick}
-            sx={{
-              minWidth: 36,
-              height: 36,
-              p: 0,
-              ml: { xs: 0.5, sm: 1 }
-            }}
-          >
-            {currentChapter}
-          </Button>
+          {currentBook && (
+            <>
+              <Button 
+                variant="contained"
+                onClick={handleBookClick} 
+                sx={{ 
+                  textOverflow: 'ellipsis', 
+                  overflow: 'hidden', 
+                  whiteSpace: 'nowrap', 
+                  minWidth: 0, 
+                  display: 'block',
+                  maxWidth: { xs: '120px', sm: '200px' }
+                }}
+              >
+                {currentBook}
+              </Button>
+              <Button 
+                variant="contained"
+                onClick={handleChapterClick}
+                sx={{
+                  minWidth: 36,
+                  height: 36,
+                  p: 0,
+                  ml: { xs: 0.5, sm: 1 }
+                }}
+              >
+                {currentChapter}
+              </Button>
+            </>
+          )}
         </Box>
         
         <Box 

@@ -211,32 +211,32 @@ export default function Navigation({
         >
           {currentBook && (
             <>
-              <Button 
-                variant="contained"
-                onClick={handleBookClick} 
-                sx={{ 
-                  textOverflow: 'ellipsis', 
-                  overflow: 'hidden', 
-                  whiteSpace: 'nowrap', 
-                  minWidth: 0, 
-                  display: 'block',
-                  maxWidth: { xs: '120px', sm: '200px' }
-                }}
-              >
-                {currentBook}
-              </Button>
-              <Button 
-                variant="contained"
-                onClick={handleChapterClick}
-                sx={{
-                  minWidth: 36,
-                  height: 36,
-                  p: 0,
-                  ml: { xs: 0.5, sm: 1 }
-                }}
-              >
-                {currentChapter}
-              </Button>
+          <Button 
+            variant="contained"
+            onClick={handleBookClick} 
+            sx={{ 
+              textOverflow: 'ellipsis', 
+              overflow: 'hidden', 
+              whiteSpace: 'nowrap', 
+              minWidth: 0, 
+              display: 'block',
+              maxWidth: { xs: '120px', sm: '200px' }
+            }}
+          >
+            {currentBook}
+          </Button>
+          <Button 
+            variant="contained"
+            onClick={handleChapterClick}
+            sx={{
+              minWidth: 36,
+              height: 36,
+              p: 0,
+              ml: { xs: 0.5, sm: 1 }
+            }}
+          >
+            {currentChapter}
+          </Button>
             </>
           )}
         </Box>

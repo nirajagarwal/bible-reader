@@ -1,3 +1,6 @@
+import fs from 'fs/promises';
+import path from 'path';
+
 export interface BibleStructure {
   [book: string]: {
     chapters: {
@@ -7,15 +10,7 @@ export interface BibleStructure {
 }
 
 export async function fetchBibleStructure(): Promise<BibleStructure> {
-  const res = await fetch('/bible_data.json');
-  if (!res.ok) throw new Error('Failed to load bible data');
-  return res.json();
-}
-
-export function getBookList(bible: BibleStructure): string[] {
-  return Object.keys(bible);
-}
-
-export function getChapterCount(bible: BibleStructure, book: string): number {
-  return bible[book] ? Object.keys(bible[book].chapters).length : 0;
+  const filePath = path.resolve(process.cwd(), 'public/bible_data.json');
+  const fileContent = await fs.readFile(filePath, 'utf-8');
+  return JSON.parse(fileContent);
 } 

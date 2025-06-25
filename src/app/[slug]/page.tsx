@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { BiblePageClient } from './BiblePageClient';
-import { fetchBibleStructure, getBookList, getChapterCount } from '@/lib/bibleData';
+import { fetchBibleStructure } from '@/lib/bibleData';
+import { getBookList, getChapterCount } from '@/lib/bibleUtils';
 import { Verse } from '@/types/bible';
 import path from 'path';
 import fs from 'fs/promises';
@@ -114,5 +115,5 @@ export default async function Page({ params }: Props) {
   const validatedChapter = (chapterNum && chapterNum > 0 && chapterNum <= chapterCount) ? chapterNum : 1;
   const initialVerses = await getVersesForChapter(foundBook, validatedChapter);
 
-  return <BiblePageClient slug={slug} initialVerses={initialVerses} />;
+  return <BiblePageClient slug={slug} initialVerses={initialVerses} bibleStructure={bibleStructure} />;
 } 

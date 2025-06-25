@@ -6,18 +6,18 @@ import Navigation from '@/components/Navigation';
 import BibleReader from '@/components/BibleReader';
 import { Verse, SearchResult } from '@/types/bible';
 import localforage from 'localforage';
-import { getChapterCount, fetchBibleStructure, getBookList } from '@/lib/bibleData';
+import { getChapterCount, getBookList } from '@/lib/bibleUtils';
 import { useState, useEffect, useMemo } from 'react';
 import { useSearch } from '@/context/SearchContext';
 
-export function BiblePageClient({ slug, initialVerses }: { slug: string, initialVerses: Verse[] }) {
+export function BiblePageClient({ slug, initialVerses, bibleStructure: initialBibleStructure }: { slug: string, initialVerses: Verse[], bibleStructure: any }) {
   const router = useRouter();
   const [currentBook, setCurrentBook] = useState<string | null>(null);
   const [currentChapter, setCurrentChapter] = useState<number | null>(null);
   const [verses, setVerses] = useState<Verse[]>(initialVerses);
   const [hasNextChapter, setHasNextChapter] = useState(false);
   const [hasPrevChapter, setHasPrevChapter] = useState(false);
-  const [bibleStructure, setBibleStructure] = useState<any>(null);
+  const [bibleStructure, setBibleStructure] = useState<any>(initialBibleStructure);
   const [highlightedVerse, setHighlightedVerse] = useState<number | null>(null);
   const [totalChapters, setTotalChapters] = useState(0);
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
@@ -28,18 +28,6 @@ export function BiblePageClient({ slug, initialVerses }: { slug: string, initial
   const { searchQuery, setSearchQuery } = useSearch();
 
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const loadStructure = async () => {
-      try {
-        const structure = await fetchBibleStructure();
-        setBibleStructure(structure);
-      } catch (error) {
-        console.error('Error loading bible structure:', error);
-      }
-    };
-    loadStructure();
-  }, []);
 
   const { otBooks, ntBooks } = useMemo(() => {
     if (!bibleStructure) return { otBooks: [], ntBooks: [] };

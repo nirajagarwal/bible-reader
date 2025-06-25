@@ -21,7 +21,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import { fetchBibleStructure, getBookList, getChapterCount, BibleStructure } from '@/lib/bibleData';
+import type { BibleStructure } from '@/lib/bibleData';
 
 interface NavigationProps {
   currentBook: string | null;

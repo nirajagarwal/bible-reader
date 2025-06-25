@@ -70,6 +70,12 @@ export default function Navigation({
     }
   }, [currentBook, ntBooks]);
 
+  useEffect(() => {
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, []);
+
   const handleSearchSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     onSearch();

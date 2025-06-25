@@ -1,32 +1,37 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import "./globals.css"
-import ThemeRegistry from '@/components/ThemeRegistry';
-import { SearchProvider } from '@/context/SearchContext'
-import { Analytics } from '@vercel/analytics/react'
+import { Providers } from './providers';
+import { Metadata } from 'next';
 
-const inter = Inter({ subsets: ['latin'] })
+const siteUrl = 'https://www.bereanbible.com';
 
 export const metadata: Metadata = {
-  title: 'Bible Reader',
-  description: 'A simple bible reader app',
-}
+  metadataBase: new URL(siteUrl),
+  title: 'Berean Bible Reader',
+  description: 'Read with in-depth AI commentary for each verse and semantic search to find related verses for self-study.',
+  openGraph: {
+    title: 'Berean Bible Reader',
+    description: 'Read with in-depth AI commentary for each verse and semantic search to find related verses for self-study.',
+    images: [`/api/og?title=Berean Bible Reader&description=Read with in-depth AI commentary for each verse and semantic search to find related verses for self-study.`],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Berean Bible Reader',
+    description: 'Read with in-depth AI commentary for each verse and semantic search to find related verses for self-study.',
+    images: [`/api/og?title=Berean Bible Reader&description=Read with in-depth AI commentary for each verse and semantic search to find related verses for self-study.`],
+  },
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <ThemeRegistry>
-          <SearchProvider>
-            {children}
-            <Analytics />
-          </SearchProvider>
-        </ThemeRegistry>
+      <body>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
-  )
+  );
 } 

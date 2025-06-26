@@ -1,7 +1,7 @@
 import { Providers } from './providers';
 import { Metadata } from 'next';
 
-const siteUrl = 'https://www.bereanbible.com';
+const siteUrl = 'https://berean-bible.vercel.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

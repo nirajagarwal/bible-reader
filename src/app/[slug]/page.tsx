@@ -29,8 +29,7 @@ async function getVersesForChapter(book: string, chapter: number): Promise<Verse
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = params;
-  const bibleStructure = await fetchBibleStructure();
-  const bookList = getBookList(bibleStructure);
+  const bookList = getBookList(bibleData);
 
   const parts = slug.split('-');
   let verseNum: number | null = null;
@@ -95,8 +94,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { slug } = params;
-  const bibleStructure = await fetchBibleStructure();
-  const bookList = getBookList(bibleStructure);
+  const bookList = getBookList(bibleData);
 
   const parts = slug.split('-');
   const lastPartIsNum = !isNaN(parseInt(parts[parts.length - 1]));
@@ -111,9 +109,9 @@ export default async function Page({ params }: Props) {
   }
   
   const foundBook = bookList.find(b => b.toLowerCase() === bookName.toLowerCase()) || 'Genesis';
-  const chapterCount = getChapterCount(bibleStructure, foundBook);
+  const chapterCount = getChapterCount(bibleData, foundBook);
   const validatedChapter = (chapterNum && chapterNum > 0 && chapterNum <= chapterCount) ? chapterNum : 1;
   const initialVerses = await getVersesForChapter(foundBook, validatedChapter);
 
-  return <BiblePageClient slug={slug} initialVerses={initialVerses} bibleStructure={bibleStructure} />;
+  return <BiblePageClient slug={slug} initialVerses={initialVerses} bibleStructure={bibleData} />;
 } 

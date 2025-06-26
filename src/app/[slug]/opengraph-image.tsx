@@ -1,5 +1,4 @@
 import { ImageResponse } from 'next/og';
-import { headers } from 'next/headers';
 import { kv } from '@vercel/kv';
 
 export const runtime = 'edge';

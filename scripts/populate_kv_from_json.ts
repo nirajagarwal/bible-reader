@@ -2,18 +2,24 @@ import { createClient } from '@vercel/kv';
 import * as fs from 'fs';
 import * as path from 'path';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
 
 dotenv.config({ path: '.env.local' });
 
-const { KV_REST_API_URL, KV_REST_API_TOKEN } = process.env;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-if (!KV_REST_API_URL || !KV_REST_API_TOKEN) {
+const kvUrl = process.env.KV_KV_REST_API_URL;
+const kvToken = process.env.KV_KV_REST_API_TOKEN;
+
+if (!kvUrl || !kvToken) {
+  console.error('Could not find Vercel KV connection details.');
   throw new Error('KV_REST_API_URL and KV_REST_API_TOKEN must be set in .env.local');
 }
 
 const kv = createClient({
-  url: KV_REST_API_URL,
-  token: KV_REST_API_TOKEN,
+  url: kvUrl,
+  token: kvToken,
 });
 
 async function populateKv() {

@@ -1,9 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { headers } from 'next/headers';
-import _bibleData from '@/lib/bible_data.json';
-import { BibleData } from '@/types/bibleData';
-
-const bibleData = _bibleData as BibleData;
+import { kv } from '@vercel/kv';
 
 export const runtime = 'edge';
 
@@ -38,15 +35,14 @@ export default async function Image({ params }: { params: { slug: string } }) {
     const { slug } = params;
     const { bookNameSlug, chapterNum } = await getBookAndChapterDetails(slug);
     
-    const bookList = Object.keys(bibleData);
-    const foundBook = bookList.find(b => b.toLowerCase() === bookNameSlug.toLowerCase());
-
     let title = 'Berean Bible Reader';
     let description = 'Read with in-depth AI commentary and semantic search.';
+    
+    const bookData: any = await kv.hgetall(bookNameSlug.replace(/ /g, '-').toLowerCase());
 
-    if (foundBook && chapterNum && bibleData[foundBook]?.chapters[chapterNum]) {
-      title = `${foundBook} ${chapterNum}`;
-      const verses = bibleData[foundBook].chapters[chapterNum];
+    if (bookData && chapterNum && bookData.chapters[chapterNum]) {
+      title = `${bookData.bookName} ${chapterNum}`;
+      const verses = bookData.chapters[chapterNum];
       if (verses.length > 0 && typeof verses[0] === 'string') {
         description = verses[0].substring(0, 150) + '...';
       }

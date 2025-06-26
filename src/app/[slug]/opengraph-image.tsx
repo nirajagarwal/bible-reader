@@ -50,7 +50,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
     const fontData = await fetch(
       'https://fonts.gstatic.com/s/specialelite/v15/XLYgIZbkc4JPUL5CVArG6RkIdHDo-Y_A.woff2'
     ).then((res) => res.arrayBuffer());
-
+    
     return new ImageResponse(
       (
         <div

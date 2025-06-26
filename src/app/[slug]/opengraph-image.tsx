@@ -1,5 +1,9 @@
 import { ImageResponse } from 'next/og';
 import { headers } from 'next/headers';
+import _bibleData from '@/lib/bible_data.json';
+import { BibleData } from '@/types/bibleData';
+
+const bibleData: BibleData = _bibleData;
 
 export const runtime = 'edge';
 
@@ -38,13 +42,6 @@ export default async function Image({ params }: { params: { slug: string } }) {
     const host = headersList.get('host') || '';
     const protocol = host.includes('localhost') ? 'http' : 'https';
     const baseUrl = `${protocol}://${host}`;
-
-    const bibleData = await fetch(`${baseUrl}/bible_data.json`).then((res) => {
-      if (!res.ok) {
-        throw new Error(`Failed to fetch bible_data.json: ${res.status} ${res.statusText}`);
-      }
-      return res.json();
-    });
 
     const bookList = Object.keys(bibleData);
     const foundBook = bookList.find(b => b.toLowerCase() === bookNameSlug.toLowerCase());

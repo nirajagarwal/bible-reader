@@ -38,7 +38,7 @@ async function embedAndStore() {
     // You mentioned you will do this in Atlas, which is the recommended approach.
     // await collection.createIndex({ embedding: '2dsphere' });
 
-    const jsonPath = path.join(process.cwd(), 'public', 'bible_data.json');
+    const jsonPath = path.join(process.cwd(), 'src', 'lib', 'bible_data.json');
     const bibleData = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
 
     // Flatten all verses into a single list to be chunked

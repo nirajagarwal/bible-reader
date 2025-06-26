@@ -3,9 +3,11 @@ import { BiblePageClient } from './BiblePageClient';
 import { fetchBibleStructure } from '@/lib/bibleData';
 import { getBookList, getChapterCount } from '@/lib/bibleUtils';
 import { Verse } from '@/types/bible';
-import path from 'path';
-import fs from 'fs/promises';
+import _bibleData from '@/lib/bible_data.json';
+import { BibleData } from '@/types/bibleData';
 import { ImageResponse } from '@vercel/og';
+
+const bibleData: BibleData = _bibleData;
 
 type Props = {
   params: { slug: string };
@@ -13,9 +15,6 @@ type Props = {
 
 // Helper to fetch verses for a chapter from the local JSON file
 async function getVersesForChapter(book: string, chapter: number): Promise<Verse[]> {
-  const filePath = path.resolve(process.cwd(), 'public/bible_data.json');
-  const fileContent = await fs.readFile(filePath, 'utf-8');
-  const bibleData = JSON.parse(fileContent);
   
   if (bibleData[book] && bibleData[book].chapters[chapter]) {
     return bibleData[book].chapters[chapter].map((text: string, index: number) => ({

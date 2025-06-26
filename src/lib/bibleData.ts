@@ -1,16 +1,26 @@
-import fs from 'fs/promises';
 import path from 'path';
+import fs from 'fs/promises';
+import { Testament } from '@/types/bible';
+import _bibleData from '@/lib/bible_data.json';
+import { BibleData } from '@/types/bibleData';
 
-export interface BibleStructure {
-  [book: string]: {
-    chapters: {
-      [chapter: string]: string[];
+const bibleData: BibleData = _bibleData;
+
+let bibleStructureCache: any = null;
+
+export async function fetchBibleStructure() {
+  if (bibleStructureCache) {
+    return bibleStructureCache;
+  }
+  
+  bibleStructureCache = Object.keys(bibleData).reduce((acc, book) => {
+    const bookData = bibleData[book];
+    acc[book] = {
+      testament: bookData.testament as Testament,
+      chapters: Object.keys(bookData.chapters).length
     };
-  };
-}
+    return acc;
+  }, {} as { [key: string]: { testament: Testament, chapters: number } });
 
-export async function fetchBibleStructure(): Promise<BibleStructure> {
-  const filePath = path.resolve(process.cwd(), 'public/bible_data.json');
-  const fileContent = await fs.readFile(filePath, 'utf-8');
-  return JSON.parse(fileContent);
+  return bibleStructureCache;
 } 

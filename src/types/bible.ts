@@ -26,15 +26,11 @@ export interface Commentary {
   timestamp: number;
 }
 
-export interface SearchResult {
-  book: string;
-  chapter: number;
-  verse: number;
-  text: string;
+export interface SearchResult extends Verse {
+  score: number;
 }
 
 export interface ReadingState {
   book: string;
   chapter: number;
-  scrollPosition: number;
 } 

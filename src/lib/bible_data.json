@@ -2,7 +2,6 @@
   "Genesis": {
     "chapters": {
       "1": [
-        "In the beginning God created the heavens and the earth.",
         "Now the earth was formless and void, and darkness was over the surface of the deep. And the Spirit of God was hovering over the surface of the waters.",
         "And God said, “Let there be light,” and there was light.",
         "And God saw that the light was good, and He separated the light from the darkness.",
@@ -1634,7 +1633,8 @@
         "And Joseph made the sons of Israel take an oath and said, “God will surely attend to you, and then you must carry my bones up from this place.”",
         "So Joseph died at the age of 110. And they embalmed his body and placed it in a coffin in Egypt."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Exodus": {
     "chapters": {
@@ -2931,7 +2931,8 @@
         "If the cloud was not lifted, they would not set out until the day it was taken up.",
         "For the cloud of the LORD was over the tabernacle by day, and fire was in the cloud by night, in the sight of all the house of Israel through all their journeys."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Leviticus": {
     "chapters": {
@@ -3848,7 +3849,8 @@
         "He must not inspect whether it is good or bad, and he shall not make any substitution. But if he does make a substitution, both the animal and its substitute shall become holy; they cannot be redeemed.’”",
         "These are the commandments that the LORD gave to Moses for the Israelites on Mount Sinai."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Numbers": {
     "chapters": {
@@ -5212,7 +5214,8 @@
         "They married within the clans of the descendants of Manasseh son of Joseph, and their inheritance remained within the tribe of their father’s clan.",
         "These are the commandments and ordinances that the LORD gave the Israelites through Moses on the plains of Moab by the Jordan across from Jericho."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Deuteronomy": {
     "chapters": {
@@ -6243,7 +6246,8 @@
         "no prophet who did all the signs and wonders that the LORD sent Moses to do in the land of Egypt to Pharaoh and to all his officials and all his land,",
         "and no prophet who performed all the mighty acts of power and awesome deeds that Moses did in the sight of all Israel."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Joshua": {
     "chapters": {
@@ -6953,7 +6957,8 @@
         "And the bones of Joseph, which the Israelites had brought up out of Egypt, were buried at Shechem in the plot of land that Jacob had purchased from the sons of Hamor, Shechem’s father, for a hundred pieces of silver. So it became an inheritance for Joseph’s descendants.",
         "Eleazar son of Aaron also died, and they buried him at Gibeah, which had been given to his son Phinehas in the hill country of Ephraim."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Judges": {
     "chapters": {
@@ -7617,7 +7622,8 @@
         "And at that time, each of the Israelites returned from there to his own tribe and clan, each to his own inheritance.",
         "In those days there was no king in Israel; everyone did what was right in his own eyes."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Ruth": {
     "chapters": {
@@ -7714,7 +7720,8 @@
         "Salmon was the father of Boaz, Boaz was the father of Obed,",
         "Obed was the father of Jesse, and Jesse was the father of David."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "1 Samuel": {
     "chapters": {
@@ -8590,7 +8597,8 @@
         "all their men of valor set out, journeyed all night, and retrieved the bodies of Saul and his sons from the wall of Beth-shan. When they arrived at Jabesh, they burned the bodies there.",
         "Then they took their bones and buried them under the tamarisk tree in Jabesh, and they fasted seven days."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "2 Samuel": {
     "chapters": {
@@ -9337,7 +9345,8 @@
         "“No,” replied the king, “I insist on paying a price, for I will not offer to the LORD my God burnt offerings that cost me nothing.” So David bought the threshing floor and the oxen for fifty shekels of silver.",
         "And there he built an altar to the LORD and offered burnt offerings and peace offerings. Then the LORD answered the prayers on behalf of the land, and the plague upon Israel was halted."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "1 Kings": {
     "chapters": {
@@ -10201,7 +10210,8 @@
         "And he did evil in the sight of the LORD and walked in the ways of his father and mother and of Jeroboam son of Nebat, who had caused Israel to sin.",
         "Ahaziah served and worshiped Baal, provoking the LORD, the God of Israel, to anger, just as his father had done."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "2 Kings": {
     "chapters": {
@@ -10974,7 +10984,8 @@
         "So Jehoiachin changed out of his prison clothes, and he dined regularly at the king’s table for the rest of his life.",
         "And the king provided Jehoiachin a daily portion for the rest of his life."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "1 Chronicles": {
     "chapters": {
@@ -11978,7 +11989,8 @@
         "Now the acts of King David, from first to last, are indeed written in the Chronicles of Samuel the Seer, the Chronicles of Nathan the Prophet, and the Chronicles of Gad the Seer,",
         "together with all the details of his reign, his might, and the circumstances that came upon him and Israel and all the kingdoms of the lands."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "2 Chronicles": {
     "chapters": {
@@ -12876,7 +12888,8 @@
         "In the first year of Cyrus king of Persia, to fulfill the word of the LORD spoken through Jeremiah, the LORD stirred the spirit of Cyrus king of Persia to send a proclamation throughout his kingdom and to put it in writing as follows:",
         "“This is what Cyrus king of Persia says: ‘The LORD, the God of heaven, who has given me all the kingdoms of the earth, has appointed me to build a house for Him at Jerusalem in Judah. Whoever among you belongs to His people, may the LORD his God be with him, and may he go up.’”"
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Ezra": {
     "chapters": {
@@ -13180,7 +13193,8 @@
         "And from the descendants of Nebo: Jeiel, Mattithiah, Zabad, Zebina, Jaddai, Joel, and Benaiah.",
         "All these men had married foreign women, and some of them had children by these wives."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Nehemiah": {
     "chapters": {
@@ -13616,7 +13630,8 @@
         "Thus I purified the priests and Levites from everything foreign, and I assigned specific duties to each of the priests and Levites.",
         "I also arranged for contributions of wood at the appointed times, and for the firstfruits. Remember me, O my God, with favor."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Esther": {
     "chapters": {
@@ -13807,7 +13822,8 @@
         "And all of Mordecai’s powerful and magnificent accomplishments, together with the full account of the greatness to which the king had raised him, are they not written in the Book of the Chronicles of the Kings of Media and Persia?",
         "For Mordecai the Jew was second only to King Xerxes, preeminent among the Jews and highly favored by his many kinsmen, seeking the good of his people and speaking peace to all his countrymen."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Job": {
     "chapters": {
@@ -14965,7 +14981,8 @@
         "After this, Job lived 140 years and saw his children and their children to the fourth generation.",
         "And so Job died, old and full of years."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Psalm": {
     "chapters": {
@@ -17730,7 +17747,8 @@
         "Praise Him with clashing cymbals; praise Him with resounding cymbals.",
         "Let everything that has breath praise the LORD! Hallelujah!"
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Proverbs": {
     "chapters": {
@@ -18711,7 +18729,8 @@
         "Charm is deceptive and beauty is fleeting, but a woman who fears the LORD is to be praised.",
         "Give her the fruit of her hands, and let her works praise her at the gates."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Ecclesiastes": {
     "chapters": {
@@ -18961,7 +18980,8 @@
         "When all has been heard, the conclusion of the matter is this: Fear God and keep His commandments, because this is the whole duty of man.",
         "For God will bring every deed into judgment, along with every hidden thing, whether good or evil."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Song of Solomon": {
     "chapters": {
@@ -19098,7 +19118,8 @@
         "You who dwell in the gardens, my companions are listening for your voice. Let me hear it!",
         "Come away, my beloved, and be like a gazelle or a young stag on the mountains of spices."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Isaiah": {
     "chapters": {
@@ -20526,7 +20547,8 @@
         "From one New Moon to another and from one Sabbath to another, all mankind will come to worship before Me,” says the LORD.",
         "“As they go forth, they will see the corpses of the men who have rebelled against Me; for their worm will never die, their fire will never be quenched, and they will be a horror to all mankind.”"
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Jeremiah": {
     "chapters": {
@@ -21998,7 +22020,8 @@
         "So Jehoiachin changed out of his prison clothes, and he dined regularly at the king’s table for the rest of his life.",
         "And the king of Babylon provided Jehoiachin a daily portion for the rest of his life, until the day of his death."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Lamentations": {
     "chapters": {
@@ -22166,7 +22189,8 @@
         "Restore us to Yourself, O LORD, so we may return; renew our days as of old,",
         "unless You have utterly rejected us and remain angry with us beyond measure."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Ezekiel": {
     "chapters": {
@@ -23539,7 +23563,8 @@
         "And on the west side, which will be 4,500 cubits long, there will be three gates: the gate of Gad, the gate of Asher, and the gate of Naphtali.",
         "The perimeter of the city will be 18,000 cubits, and from that day on the name of the city will be: THE LORD IS THERE.”"
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Daniel": {
     "chapters": {
@@ -23924,7 +23949,8 @@
         "Blessed is he who waits and reaches the end of the 1,335 days.",
         "But as for you, go on your way until the end. You will rest, and then you will arise to your inheritance at the end of the days.”"
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Hosea": {
     "chapters": {
@@ -24153,7 +24179,8 @@
         "O Ephraim, what have I to do anymore with idols? It is I who answer and watch over him. I am like a flourishing cypress; your fruit comes from Me.",
         "Whoever is wise, let him understand these things; whoever is discerning, let him know them. For the ways of the LORD are right, and the righteous walk in them but the rebellious stumble in them."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Joel": {
     "chapters": {
@@ -24236,7 +24263,8 @@
         "But Judah will be inhabited forever, and Jerusalem from generation to generation.",
         "For I will avenge their blood, which I have not yet avenged.” For the LORD dwells in Zion."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Amos": {
     "chapters": {
@@ -24404,7 +24432,8 @@
         "I will restore My people Israel from captivity; they will rebuild and inhabit the ruined cities. They will plant vineyards and drink their wine; they will make gardens and eat their fruit.",
         "I will firmly plant them in their own land, never again to be uprooted from the land that I have given them,” says the LORD your God."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Obadiah": {
     "chapters": {
@@ -24431,7 +24460,8 @@
         "And the exiles of this host of the Israelites will possess the land of the Canaanites as far as Zarephath; and the exiles from Jerusalem who are in Sepharad will possess the cities of the Negev.",
         "The deliverers will ascend Mount Zion to rule over the mountains of Esau. And the kingdom will belong to the LORD."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Jonah": {
     "chapters": {
@@ -24491,7 +24521,8 @@
         "But the LORD said, “You cared about the plant, which you neither tended nor made grow. It sprang up in a night and perished in a night.",
         "So should I not care about the great city of Nineveh, which has more than 120,000 people who cannot tell their right hand from their left, and many cattle as well?”"
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Micah": {
     "chapters": {
@@ -24614,7 +24645,8 @@
         "He will again have compassion on us; He will vanquish our iniquities. You will cast out all our sins into the depths of the sea.",
         "You will show faithfulness to Jacob and loving devotion to Abraham, as You swore to our fathers from the days of old."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Nahum": {
     "chapters": {
@@ -24671,7 +24703,8 @@
         "O king of Assyria, your shepherds slumber; your officers sleep. Your people are scattered on the mountains with no one to gather them.",
         "There is no healing for your injury; your wound is severe. All who hear the news of you applaud your downfall, for who has not experienced your constant cruelty?"
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Habakkuk": {
     "chapters": {
@@ -24737,7 +24770,8 @@
         "yet I will exult in the LORD; I will rejoice in the God of my salvation!",
         "GOD the Lord is my strength; He makes my feet like those of a deer; He makes me walk upon the heights! For the choirmaster. With stringed instruments."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Zephaniah": {
     "chapters": {
@@ -24800,7 +24834,8 @@
         "Behold, at that time, I will deal with all who afflict you. I will save the lame and gather the scattered; and I will appoint praise and fame for the disgraced throughout the earth.",
         "At that time I will bring you in; yes, at that time I will gather you. For I will give you fame and praise among all the peoples of the earth when I restore your captives before your very eyes,” says the LORD."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Haggai": {
     "chapters": {
@@ -24846,7 +24881,8 @@
         "I will overturn royal thrones and destroy the power of the kingdoms of the nations. I will overturn chariots and their riders; horses and their riders will fall, each by the sword of his brother.",
         "On that day, declares the LORD of Hosts, I will take you, My servant, Zerubbabel son of Shealtiel, declares the LORD, and I will make you like My signet ring, for I have chosen you, declares the LORD of Hosts.”"
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Zechariah": {
     "chapters": {
@@ -25089,7 +25125,8 @@
         "On that day, HOLY TO THE LORD will be inscribed on the bells of the horses, and the cooking pots in the house of the LORD will be like the sprinkling bowls before the altar.",
         "Indeed, every pot in Jerusalem and Judah will be holy to the LORD of Hosts, and all who sacrifice will come and take some pots and cook in them. And on that day there will no longer be a Canaanite in the house of the LORD of Hosts."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Malachi": {
     "chapters": {
@@ -25156,7 +25193,8 @@
         "Behold, I will send you Elijah the prophet before the coming of the great and awesome Day of the LORD.",
         "And he will turn the hearts of the fathers to their children, and the hearts of the children to their fathers. Otherwise, I will come and strike the land with a curse.”"
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Matthew": {
     "chapters": {
@@ -25769,7 +25807,6 @@
         "Then Jesus rebuked the demon, and it came out of the boy, and he was healed from that moment.",
         "Afterward the disciples came to Jesus privately and asked, “Why couldn’t we drive it out?”",
         "“Because you have so little faith,” He answered. “For truly I tell you, if you have faith the size of a mustard seed, you can say to this mountain, ‘Move from here to there,’ and it will move. Nothing will be impossible for you.”",
-        null,
         "When they gathered together in Galilee, Jesus told them, “The Son of Man is about to be delivered into the hands of men.",
         "They will kill Him, and on the third day He will be raised to life.” And the disciples were deeply grieved.",
         "After they had arrived in Capernaum, the collectors of the two-drachma tax came to Peter and asked, “Does your Teacher pay the two drachmas?”",
@@ -25788,7 +25825,6 @@
         "If your hand or your foot causes you to sin, cut it off and throw it away. It is better for you to enter life crippled or lame than to have two hands and two feet and be thrown into the eternal fire.",
         "And if your eye causes you to sin, gouge it out and throw it away. It is better for you to enter life with one eye than to have two eyes and be thrown into the fire of hell.",
         "See that you do not look down on any of these little ones. For I tell you that their angels in heaven always see the face of My Father in heaven.",
-        null,
         "What do you think? If a man has a hundred sheep and one of them goes astray, will he not leave the ninety-nine on the hills and go out to search for the one that is lost?",
         "And if he finds it, truly I tell you, he rejoices more over that one sheep than over the ninety-nine that did not go astray.",
         "In the same way, your Father in heaven is not willing that any of these little ones should perish.",
@@ -25992,7 +26028,6 @@
         "The greatest among you shall be your servant.",
         "For whoever exalts himself will be humbled, and whoever humbles himself will be exalted.",
         "Woe to you, scribes and Pharisees, you hypocrites! You shut the kingdom of heaven in men’s faces. You yourselves do not enter, nor will you let in those who wish to enter.",
-        null,
         "Woe to you, scribes and Pharisees, you hypocrites! You traverse land and sea to win a single convert, and when he becomes one, you make him twice as much a son of hell as you are.",
         "Woe to you, blind guides! You say, ‘If anyone swears by the temple, it means nothing; but if anyone swears by the gold of the temple, he is bound by his oath.’",
         "You blind fools! Which is greater: the gold, or the temple that makes it sacred?",
@@ -26287,7 +26322,8 @@
         "Therefore go and make disciples of all nations, baptizing them in the name of the Father and of the Son and of the Holy Spirit,",
         "and teaching them to obey all that I have commanded you. And surely I am with you always, even to the end of the age.”"
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Mark": {
     "chapters": {
@@ -26567,7 +26603,6 @@
         "Thus you nullify the word of God by the tradition you have handed down. And you do so in many such matters.”",
         "Once again Jesus called the crowd to Him and said, “All of you, listen to Me and understand:",
         "Nothing that enters a man from the outside can defile him; but the things that come out of a man, these are what defile him.”",
-        null,
         "After Jesus had left the crowd and gone into the house, His disciples inquired about the parable.",
         "“Are you still so dull?” He asked. “Do you not understand? Nothing that enters a man from the outside can defile him,",
         "because it does not enter his heart, but it goes into the stomach and then is eliminated.” (Thus all foods are clean.)",
@@ -26674,9 +26709,7 @@
         "Indeed, if anyone gives you even a cup of water because you bear the name of Christ, truly I tell you, he will never lose his reward.",
         "But if anyone causes one of these little ones who believe in Me to stumble, it would be better for him to have a large millstone hung around his neck and to be thrown into the sea.",
         "If your hand causes you to sin, cut it off. It is better for you to enter life crippled than to have two hands and go into hell, into the unquenchable fire.",
-        null,
         "If your foot causes you to sin, cut it off. It is better for you to enter life lame than to have two feet and be thrown into hell.",
-        null,
         "And if your eye causes you to sin, pluck it out. It is better for you to enter the kingdom of God with one eye than to have two eyes and be thrown into hell,",
         "where ‘their worm never dies, and the fire is never quenched.’",
         "For everyone will be salted with fire.",
@@ -26762,7 +26795,6 @@
         "“Truly I tell you that if anyone says to this mountain, ‘Be lifted up and thrown into the sea,’ and has no doubt in his heart but believes that it will happen, it will be done for him.",
         "Therefore I tell you, whatever you ask for in prayer, believe that you have received it, and it will be yours.",
         "And when you stand to pray, if you hold anything against another, forgive it, so that your Father in heaven will forgive your trespasses as well.”",
-        null,
         "After their return to Jerusalem, Jesus was walking in the temple courts, and the chief priests, scribes, and elders came up to Him.",
         "“By what authority are You doing these things?” they asked. “And who gave You the authority to do them?”",
         "“I will ask you one question,” Jesus replied, “and if you answer Me, I will tell you by what authority I am doing these things.",
@@ -26958,7 +26990,6 @@
         "It was the third hour when they crucified Him.",
         "And the charge inscribed against Him read: THE KING OF THE JEWS.",
         "Along with Jesus, they crucified two robbers, one on His right and one on His left.",
-        null,
         "And those who passed by heaped abuse on Him, shaking their heads and saying, “Aha! You who are going to destroy the temple and rebuild it in three days,",
         "come down from the cross and save Yourself!”",
         "In the same way, the chief priests and scribes mocked Him among themselves, saying, “He saved others, but He cannot save Himself!",
@@ -27001,7 +27032,8 @@
         "After the Lord Jesus had spoken to them, He was taken up into heaven and sat down at the right hand of God.",
         "And they went out and preached everywhere, and the Lord worked through them, confirming His word by the signs that accompanied it."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Luke": {
     "chapters": {
@@ -27831,7 +27863,6 @@
         "Whoever tries to save his life will lose it, but whoever loses his life will preserve it.",
         "I tell you, on that night two people will be in one bed: one will be taken and the other left.",
         "Two women will be grinding grain together: one will be taken and the other left.”",
-        null,
         "“Where, Lord?” they asked. Jesus answered, “Wherever there is a carcass, there the vultures will gather.”"
       ],
       "18": [
@@ -28108,7 +28139,6 @@
         "and said to them, “You brought me this man as one who was inciting the people to rebellion. I have examined Him here in your presence and found Him not guilty of your charges against Him.",
         "Neither has Herod, for he sent Him back to us. As you can see, He has done nothing deserving of death.",
         "Therefore I will punish Him and release Him.”",
-        null,
         "But they all cried out in unison: “Away with this man! Release Barabbas to us!”",
         "(Barabbas had been imprisoned for an insurrection in the city, and for murder.)",
         "Wanting to release Jesus, Pilate addressed them again,",
@@ -28204,7 +28234,8 @@
         "And they worshiped Him and returned to Jerusalem with great joy,",
         "praising God continually in the temple."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "John": {
     "chapters": {
@@ -28386,7 +28417,6 @@
         "Some time later there was a feast of the Jews, and Jesus went up to Jerusalem.",
         "Now there is in Jerusalem near the Sheep Gate a pool with five covered colonnades, which in Hebrew is called Bethesda.",
         "On these walkways lay a great number of the sick, the blind, the lame, and the paralyzed.",
-        null,
         "One man there had been an invalid for thirty-eight years.",
         "When Jesus saw him lying there and realized that he had spent a long time in this condition, He asked him, “Do you want to get well?”",
         "“Sir,” the invalid replied, “I have no one to help me into the pool when the water is stirred. While I am on my way, someone else goes in before me.”",
@@ -29129,7 +29159,8 @@
         "This is the disciple who testifies to these things and who has written them down. And we know that his testimony is true.",
         "There are many more things that Jesus did. If all of them were written down, I suppose that not even the world itself would have space for the books that would be written."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Acts": {
     "chapters": {
@@ -29437,7 +29468,6 @@
         "“Tell me,” said the eunuch, “who is the prophet talking about, himself or someone else?”",
         "Then Philip began with this very Scripture and told him the good news about Jesus.",
         "As they traveled along the road and came to some water, the eunuch said, “Look, here is water! What is there to prevent me from being baptized?”",
-        null,
         "And he gave orders to stop the chariot. Then both Philip and the eunuch went down into the water, and Philip baptized him.",
         "When they came up out of the water, the Spirit of the Lord carried Philip away, and the eunuch saw him no more, but went on his way rejoicing.",
         "But Philip appeared at Azotus and traveled through that region, preaching the gospel in all the towns until he came to Caesarea."
@@ -29714,7 +29744,6 @@
         "When the people read it, they rejoiced at its encouraging message.",
         "Judas and Silas, who themselves were prophets, said much to encourage and strengthen the brothers.",
         "After spending some time there, they were sent off by the brothers in peace to return to those who had sent them.",
-        null,
         "But Paul and Barnabas remained at Antioch, along with many others, teaching and preaching the word of the Lord.",
         "Some time later Paul said to Barnabas, “Let us go back and visit the brothers in every town where we proclaimed the word of the Lord, to see how they are doing.”",
         "Barnabas wanted to take John, also called Mark.",
@@ -30032,7 +30061,6 @@
         "But in order not to delay you any further, I beg your indulgence to hear us briefly.",
         "We have found this man to be a pestilence, stirring up dissension among the Jews all over the world. He is a ringleader of the sect of the Nazarenes,",
         "and he even tried to desecrate the temple; so we seized him.",
-        null,
         "By examining him yourself, you will be able to learn the truth about all our charges against him.”",
         "The Jews concurred, asserting that these charges were true.",
         "When the governor motioned for Paul to speak, he began his response: “Knowing that you have been a judge over this nation for many years, I gladly make my defense.",
@@ -30192,11 +30220,11 @@
         "‘Go to this people and say, “You will be ever hearing but never understanding; you will be ever seeing but never perceiving.”",
         "For this people’s heart has grown callous; they hardly hear with their ears, and they have closed their eyes. Otherwise they might see with their eyes, hear with their ears, understand with their hearts, and turn, and I would heal them.’",
         "Be advised, therefore, that God’s salvation has been sent to the Gentiles, and they will listen!”",
-        null,
         "Paul stayed there two full years in his own rented house, welcoming all who came to visit him.",
         "Boldly and freely he proclaimed the kingdom of God and taught about the Lord Jesus Christ."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Romans": {
     "chapters": {
@@ -30660,12 +30688,12 @@
         "Timothy, my fellow worker, sends you greetings, as do Lucius, Jason, and Sosipater, my fellow countrymen.",
         "I, Tertius, who wrote down this letter, greet you in the Lord.",
         "Gaius, who has hosted me and all the church, sends you greetings. Erastus, the city treasurer, sends you greetings, as does our brother Quartus.",
-        null,
         "Now to Him who is able to strengthen you by my gospel and by the proclamation of Jesus Christ, according to the revelation of the mystery concealed for ages past",
         "but now revealed and made known through the writings of the prophets by the command of the eternal God, in order to lead all nations to the obedience that comes from faith—",
         "to the only wise God be glory forever through Jesus Christ! Amen."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "1 Corinthians": {
     "chapters": {
@@ -31138,7 +31166,8 @@
         "The grace of the Lord Jesus be with you.",
         "My love be with all of you in Christ Jesus. Amen."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "2 Corinthians": {
     "chapters": {
@@ -31425,7 +31454,8 @@
         "All the saints send you greetings.",
         "The grace of the Lord Jesus Christ, and the love of God, and the fellowship of the Holy Spirit be with all of you."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Galatians": {
     "chapters": {
@@ -31590,7 +31620,8 @@
         "From now on let no one cause me trouble, for I bear on my body the marks of Jesus.",
         "The grace of our Lord Jesus Christ be with your spirit, brothers. Amen."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Ephesians": {
     "chapters": {
@@ -31761,7 +31792,8 @@
         "Peace to the brothers and love with faith from God the Father and the Lord Jesus Christ.",
         "Grace to all who love our Lord Jesus Christ with an undying love."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Philippians": {
     "chapters": {
@@ -31877,7 +31909,8 @@
         "All the saints send you greetings, especially those from the household of Caesar.",
         "The grace of the Lord Jesus Christ be with your spirit."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Colossians": {
     "chapters": {
@@ -31984,7 +32017,8 @@
         "Tell Archippus: “See to it that you complete the ministry you have received in the Lord.”",
         "This greeting is in my own hand—Paul. Remember my chains. Grace be with you."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "1 Thessalonians": {
     "chapters": {
@@ -32087,7 +32121,8 @@
         "I charge you before the Lord to have this letter read to all the brothers.",
         "The grace of our Lord Jesus Christ be with you."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "2 Thessalonians": {
     "chapters": {
@@ -32144,7 +32179,8 @@
         "This greeting is in my own hand—Paul. This is my mark in every letter; it is the way I write.",
         "The grace of our Lord Jesus Christ be with all of you."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "1 Timothy": {
     "chapters": {
@@ -32273,7 +32309,8 @@
         "O Timothy, guard what has been entrusted to you. Avoid irreverent, empty chatter and the opposing arguments of so-called “knowledge,”",
         "which some have professed and thus swerved away from the faith. Grace be with you all."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "2 Timothy": {
     "chapters": {
@@ -32368,7 +32405,8 @@
         "Make every effort to come to me before winter. Eubulus sends you greetings, as do Pudens, Linus, Claudia, and all the brothers.",
         "The Lord be with your spirit. Grace be with you all."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Titus": {
     "chapters": {
@@ -32424,7 +32462,8 @@
         "And our people must also learn to devote themselves to good works in order to meet the pressing needs of others, so that they will not be unfruitful.",
         "All who are with me send you greetings. Greet those who love us in the faith. Grace be with all of you."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Philemon": {
     "chapters": {
@@ -32455,7 +32494,8 @@
         "as do Mark, Aristarchus, Demas, and Luke, my fellow workers.",
         "The grace of the Lord Jesus Christ be with your spirit."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Hebrews": {
     "chapters": {
@@ -32788,7 +32828,8 @@
         "Greet all your leaders and all the saints. Those from Italy send you greetings.",
         "Grace be with all of you."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "James": {
     "chapters": {
@@ -32910,7 +32951,8 @@
         "My brothers, if one of you should wander from the truth and someone should bring him back,",
         "consider this: Whoever turns a sinner from the error of his way will save his soul from death and cover over a multitude of sins."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "1 Peter": {
     "chapters": {
@@ -33029,7 +33071,8 @@
         "The church in Babylon, chosen together with you, sends you greetings, as does my son Mark.",
         "Greet one another with a kiss of love. Peace to all of you who are in Christ."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "2 Peter": {
     "chapters": {
@@ -33100,7 +33143,8 @@
         "Therefore, beloved, since you already know these things, be on your guard so that you will not be carried away by the error of the lawless and fall from your secure standing.",
         "But grow in the grace and knowledge of our Lord and Savior Jesus Christ. To Him be the glory both now and to the day of eternity. Amen."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "1 John": {
     "chapters": {
@@ -33219,7 +33263,8 @@
         "And we know that the Son of God has come and has given us understanding, so that we may know Him who is true; and we are in Him who is true—in His Son Jesus Christ. He is the true God and eternal life.",
         "Little children, keep yourselves from idols."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "2 John": {
     "chapters": {
@@ -33238,7 +33283,8 @@
         "I have many things to write to you, but I would prefer not to do so with paper and ink. Instead, I hope to come and speak with you face to face, so that our joy may be complete.",
         "The children of your elect sister send you greetings."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "3 John": {
     "chapters": {
@@ -33258,7 +33304,8 @@
         "I have many things to write to you, but I would prefer not to do so with pen and ink.",
         "Instead, I hope to see you soon and speak with you face to face. Peace to you. The friends here send you greetings. Greet each of our friends there by name."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Jude": {
     "chapters": {
@@ -33289,7 +33336,8 @@
         "Now to Him who is able to keep you from stumbling and to present you unblemished in His glorious presence, with great joy—",
         "to the only God our Savior be glory, majesty, dominion, and authority through Jesus Christ our Lord before all time, and now, and for all eternity. Amen."
       ]
-    }
+    },
+    "testament": "undefined"
   },
   "Revelation": {
     "chapters": {
@@ -33741,6 +33789,7 @@
         "He who testifies to these things says, “Yes, I am coming soon.” Amen. Come, Lord Jesus!",
         "The grace of the Lord Jesus be with all the saints. Amen."
       ]
-    }
+    },
+    "testament": "undefined"
   }
 }

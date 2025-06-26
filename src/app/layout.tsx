@@ -6,10 +6,12 @@ import Navigation from "@/components/Navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const siteUrl = 'https://berean-bible.vercel.app';
+const siteUrl = process.env.VERCEL_ENV === 'production' 
+  ? 'https://berean-bible.vercel.app' 
+  : (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.berean.bible'),
+  metadataBase: new URL(siteUrl),
   title: 'Berean Bible Reader',
   description: 'Read with in-depth AI commentary for each verse and semantic search to find related verses for self-study.',
   openGraph: {
@@ -22,7 +24,7 @@ export const metadata: Metadata = {
       alt: 'Berean Bible Reader',
     }],
     type: 'website',
-    url: 'https://www.berean.bible',
+    url: siteUrl,
   },
   twitter: {
     card: 'summary_large_image',

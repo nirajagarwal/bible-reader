@@ -72,7 +72,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title = `${baseTitle} - ${foundBook} ${chapterNum}:${verseNum}`;
     description = verses[verseNum - 1].text;
   } else {
-    description = verses.length > 0 ? `${verses[0].text.substring(0, 150)}... ${baseDescription}` : baseDescription;
+    description = verses.length > 0 ? verses[0].text.substring(0, 150) + '...' : baseDescription;
   }
 
   const ogDescription = verses.length > 0 ? verses[0].text.substring(0, 150) + '...' : baseDescription;
@@ -80,6 +80,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
+    openGraph: {
+      title,
+      description,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
   };
 }
 

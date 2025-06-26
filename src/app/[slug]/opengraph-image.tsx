@@ -3,7 +3,7 @@ import { headers } from 'next/headers';
 import _bibleData from '@/lib/bible_data.json';
 import { BibleData } from '@/types/bibleData';
 
-const bibleData: BibleData = _bibleData;
+const bibleData = _bibleData as BibleData;
 
 export const runtime = 'edge';
 

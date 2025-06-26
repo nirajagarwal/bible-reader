@@ -3,7 +3,7 @@ import _bibleData from '@/lib/bible_data.json';
 import { BibleData } from '@/types/bibleData';
 import { Verse } from '@/types/bible';
 
-const bibleData: BibleData = _bibleData;
+const bibleData = _bibleData as BibleData;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

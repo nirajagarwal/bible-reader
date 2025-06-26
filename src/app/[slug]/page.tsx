@@ -7,7 +7,7 @@ import _bibleData from '@/lib/bible_data.json';
 import { BibleData } from '@/types/bibleData';
 import { ImageResponse } from '@vercel/og';
 
-const bibleData: BibleData = _bibleData;
+const bibleData = _bibleData as BibleData;
 
 type Props = {
   params: { slug: string };

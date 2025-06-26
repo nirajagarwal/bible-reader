@@ -38,11 +38,6 @@ export default async function Image({ params }: { params: { slug: string } }) {
     const { slug } = params;
     const { bookNameSlug, chapterNum } = await getBookAndChapterDetails(slug);
     
-    const headersList = headers();
-    const host = headersList.get('host') || '';
-    const protocol = host.includes('localhost') ? 'http' : 'https';
-    const baseUrl = `${protocol}://${host}`;
-
     const bookList = Object.keys(bibleData);
     const foundBook = bookList.find(b => b.toLowerCase() === bookNameSlug.toLowerCase());
 

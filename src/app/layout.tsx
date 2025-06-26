@@ -1,29 +1,27 @@
 import { Providers } from './providers';
 import { Metadata } from 'next';
+import { Inter } from "next/font/google";
+import "./globals.css";
+import Navigation from "@/components/Navigation";
+
+const inter = Inter({ subsets: ["latin"] });
 
 const siteUrl = 'https://berean-bible.vercel.app';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL('https://www.berean.bible'),
   title: 'Berean Bible Reader',
   description: 'Read with in-depth AI commentary for each verse and semantic search to find related verses for self-study.',
   openGraph: {
     title: 'Berean Bible Reader',
-    description: 'Read with in-depth AI commentary for each verse and semantic search to find related verses for self-study.',
-    images: [
-      {
-        url: `/api/og?title=Berean Bible Reader&description=Read with in-depth AI commentary for each verse and semantic search to find related verses for self-study.`,
-        width: 1200,
-        height: 630,
-        alt: 'Berean Bible Reader',
-      },
-    ],
+    description: 'AI commentary and semantic search for the Bible.',
+    type: 'website',
+    url: 'https://www.berean.bible',
   },
   twitter: {
-    card: 'summary_large_image',
+    card: 'summary',
     title: 'Berean Bible Reader',
-    description: 'Read with in-depth AI commentary for each verse and semantic search to find related verses for self-study.',
-    images: [`/api/og?title=Berean Bible Reader&description=Read with in-depth AI commentary for each verse and semantic search to find related verses for self-study.`],
+    description: 'AI commentary and semantic search for the Bible.',
   },
 };
 

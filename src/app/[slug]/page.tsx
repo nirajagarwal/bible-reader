@@ -76,19 +76,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description = verses.length > 0 ? `${verses[0].text.substring(0, 150)}... ${baseDescription}` : baseDescription;
   }
 
+  const ogDescription = verses.length > 0 ? verses[0].text.substring(0, 150) + '...' : baseDescription;
+
   return {
     title,
     description,
     openGraph: {
       title,
       description,
-      images: [`/api/og?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`],
+      images: [`/api/og?title=${encodeURIComponent(title)}&description=${encodeURIComponent(ogDescription)}`],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [`/api/og?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`],
+      images: [`/api/og?title=${encodeURIComponent(title)}&description=${encodeURIComponent(ogDescription)}`],
     },
   };
 }

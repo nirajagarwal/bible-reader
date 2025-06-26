@@ -15,13 +15,20 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Berean Bible Reader',
     description: 'AI commentary and semantic search for the Bible.',
+    images: [{
+      url: '/og.png',
+      width: 1200,
+      height: 630,
+      alt: 'Berean Bible Reader',
+    }],
     type: 'website',
     url: 'https://www.berean.bible',
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Berean Bible Reader',
     description: 'AI commentary and semantic search for the Bible.',
+    images: ['/og.png'],
   },
 };
 

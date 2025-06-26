@@ -10,7 +10,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Berean Bible Reader',
     description: 'Read with in-depth AI commentary for each verse and semantic search to find related verses for self-study.',
-    images: [`/api/og?title=Berean Bible Reader&description=Read with in-depth AI commentary for each verse and semantic search to find related verses for self-study.`],
+    images: [
+      {
+        url: `/api/og?title=Berean Bible Reader&description=Read with in-depth AI commentary for each verse and semantic search to find related verses for self-study.`,
+        width: 1200,
+        height: 630,
+        alt: 'Berean Bible Reader',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',

@@ -5,6 +5,7 @@ import { getBookList, getChapterCount } from '@/lib/bibleUtils';
 import { Verse } from '@/types/bible';
 import path from 'path';
 import fs from 'fs/promises';
+import { ImageResponse } from '@vercel/og';
 
 type Props = {
   params: { slug: string };
@@ -84,13 +85,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      images: [`/api/og?title=${encodeURIComponent(title)}&description=${encodeURIComponent(ogDescription)}`],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [`/api/og?title=${encodeURIComponent(title)}&description=${encodeURIComponent(ogDescription)}`],
     },
   };
 }

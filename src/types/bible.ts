@@ -30,6 +30,11 @@ export interface SearchResult extends Verse {
   score: number;
 }
 
+export interface SearchResponse {
+  oldTestament: SearchResult[];
+  newTestament: SearchResult[];
+}
+
 export interface ReadingState {
   book: string;
   chapter: number;

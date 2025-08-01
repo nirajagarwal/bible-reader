@@ -10,10 +10,6 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {
-    // This will provide more detailed logs in the Vercel deployment console.
-    logging: 'verbose',
-  },
 };
 
 export default nextConfig; 

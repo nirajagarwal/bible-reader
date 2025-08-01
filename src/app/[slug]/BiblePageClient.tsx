@@ -21,11 +21,18 @@ export function BiblePageClient({ slug, initialVerses, bibleStructure: initialBi
   const [highlightedVerse, setHighlightedVerse] = useState<number | null>(null);
   const [totalChapters, setTotalChapters] = useState(0);
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [isCommentaryDrawerOpen, setIsCommentaryDrawerOpen] = useState(false);
-  const { searchQuery, setSearchQuery } = useSearch();
+  const { 
+    searchQuery, 
+    setSearchQuery, 
+    oldTestamentResults, 
+    newTestamentResults, 
+    setSearchResults,
+    activeTab,
+    setActiveTab
+  } = useSearch();
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -145,7 +152,7 @@ export function BiblePageClient({ slug, initialVerses, bibleStructure: initialBi
 
     setIsSearchLoading(true);
     setSearchError(null);
-    setSearchResults([]);
+    setSearchResults([], []); // Clear both OT and NT results
     setIsSearchDrawerOpen(true);
 
     try {
@@ -160,7 +167,7 @@ export function BiblePageClient({ slug, initialVerses, bibleStructure: initialBi
       }
 
       const data = await response.json();
-      setSearchResults(data.results);
+      setSearchResults(data.oldTestament || [], data.newTestament || []);
     } catch (err) {
       setSearchError('An error occurred while searching.');
     } finally {
@@ -210,13 +217,16 @@ export function BiblePageClient({ slug, initialVerses, bibleStructure: initialBi
         onVerseSelectFromSearch={handleVerseSelectFromSearch}
         isSearchDrawerOpen={isSearchDrawerOpen}
         onCloseSearchDrawer={handleCloseSearchDrawer}
-        searchResults={searchResults}
+        oldTestamentResults={oldTestamentResults}
+        newTestamentResults={newTestamentResults}
         isSearchLoading={isSearchLoading}
         searchError={searchError}
         isCommentaryDrawerOpen={isCommentaryDrawerOpen}
         onCommentaryDrawerOpen={handleOpenCommentaryDrawer}
         onCommentaryDrawerClose={handleCloseCommentaryDrawer}
         onFindRelated={handleSearch}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
       />
     </Box>
   );

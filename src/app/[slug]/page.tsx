@@ -99,17 +99,26 @@ export default async function Page({ params }: Props) {
   const bookList = getBookList(bibleData);
 
   const parts = slug.split('-');
-  const lastPartIsNum = !isNaN(parseInt(parts[parts.length - 1]));
-  let bookName, chapterNum;
+  let verseNum: number | null = null;
+  let chapterNum: number | null = null;
+  let bookParts: string[] = [];
 
-  if(lastPartIsNum) {
+  if (parts.length > 0 && !isNaN(parseInt(parts[parts.length - 1]))) {
+    const lastPart = parseInt(parts.pop() as string);
+    if (parts.length > 0 && !isNaN(parseInt(parts[parts.length - 1]))) {
+      verseNum = lastPart;
       chapterNum = parseInt(parts.pop() as string);
-      bookName = parts.join(' ');
+      bookParts = parts;
+    } else {
+      chapterNum = lastPart;
+      bookParts = parts;
+    }
   } else {
-      bookName = parts.join(' ');
-      chapterNum = 1;
+    bookParts = parts;
+    chapterNum = 1;
   }
   
+  const bookName = bookParts.join(' ');
   const foundBook = bookList.find(b => b.toLowerCase() === bookName.toLowerCase()) || 'Genesis';
   const chapterCount = getChapterCount(bibleData, foundBook);
   const validatedChapter = (chapterNum && chapterNum > 0 && chapterNum <= chapterCount) ? chapterNum : 1;

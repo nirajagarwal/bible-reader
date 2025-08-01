@@ -11,6 +11,8 @@ import {
   ListItem,
   ListItemText,
   MenuItem,
+  Tabs,
+  Tab,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
@@ -30,13 +32,16 @@ interface BibleReaderProps {
   onVerseSelectFromSearch: (book: string, chapter: number, verse: number) => void;
   isSearchDrawerOpen: boolean;
   onCloseSearchDrawer: () => void;
-  searchResults: SearchResult[];
+  oldTestamentResults: SearchResult[];
+  newTestamentResults: SearchResult[];
   isSearchLoading: boolean;
   searchError: string | null;
   isCommentaryDrawerOpen: boolean;
   onCommentaryDrawerOpen: () => void;
   onCommentaryDrawerClose: () => void;
   onFindRelated: (query: string) => void;
+  activeTab: 'NT' | 'OT';
+  onTabChange: (tab: 'NT' | 'OT') => void;
 }
 
 export default function BibleReader({ 
@@ -48,13 +53,16 @@ export default function BibleReader({
   onVerseSelectFromSearch,
   isSearchDrawerOpen,
   onCloseSearchDrawer,
-  searchResults,
+  oldTestamentResults,
+  newTestamentResults,
   isSearchLoading,
   searchError,
   isCommentaryDrawerOpen,
   onCommentaryDrawerOpen,
   onCommentaryDrawerClose,
   onFindRelated,
+  activeTab,
+  onTabChange,
 }: BibleReaderProps) {
   const [selectedVerse, setSelectedVerse] = useState<Verse | null>(null);
   const [commentary, setCommentary] = useState<Commentary | null>(null);
@@ -189,8 +197,21 @@ export default function BibleReader({
   };
 
   const handleCopySearchResults = () => {
-    const textToCopy = searchResults.map(r => `${r.book} ${r.chapter}:${r.verse} - ${r.text}`).join('\n\n');
+    const allResults = [...newTestamentResults, ...oldTestamentResults];
+    const textToCopy = allResults.map(r => `${r.book} ${r.chapter}:${r.verse} - ${r.text}`).join('\n\n');
     navigator.clipboard.writeText(textToCopy);
+  };
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    onTabChange(newValue === 0 ? 'NT' : 'OT');
+  };
+
+  const getCurrentResults = () => {
+    return activeTab === 'NT' ? newTestamentResults : oldTestamentResults;
+  };
+
+  const getTotalResultsCount = () => {
+    return oldTestamentResults.length + newTestamentResults.length;
   };
 
   const navsHidden = isSearchDrawerOpen || isCommentaryDrawerOpen;
@@ -211,7 +232,7 @@ export default function BibleReader({
           '& > *': { mb: 2 },
         }}
       >
-        {verses.map((verse) => (
+        {verses && verses.map((verse) => (
           <Typography
             ref={verse.verse === highlightedVerse ? highlightedVerseRef : null}
             key={`${verse.chapter}-${verse.verse}`}
@@ -323,7 +344,7 @@ export default function BibleReader({
             Search Results
           </Typography>
           <Box>
-            {searchResults.length > 0 && (
+            {getTotalResultsCount() > 0 && (
               <IconButton color="inherit" onClick={handleCopySearchResults}>
                 <ContentCopyIcon />
               </IconButton>
@@ -333,15 +354,36 @@ export default function BibleReader({
             </IconButton>
           </Box>
         </Box>
+        
+        {/* Tabs for Old/New Testament */}
+        {!isSearchLoading && !searchError && getTotalResultsCount() > 0 && (
+          <Box sx={{ borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
+            <Tabs 
+              value={activeTab === 'NT' ? 0 : 1} 
+              onChange={handleTabChange}
+              sx={{ minHeight: 48 }}
+            >
+              <Tab 
+                label="New Testament"
+                sx={{ minHeight: 48, textTransform: 'none' }}
+              />
+              <Tab 
+                label="Old Testament"
+                sx={{ minHeight: 48, textTransform: 'none' }}
+              />
+            </Tabs>
+          </Box>
+        )}
+        
         <Box sx={{ flex: 1, overflowY: 'auto' }}>
           {isSearchLoading && <Box sx={{display: 'flex', justifyContent: 'center', p: 4}}><ScaleLoader color={theme.palette.text.secondary} /></Box>}
           {searchError && <Typography color="error" sx={{px: 2}}>{searchError}</Typography>}
-          {!isSearchLoading && !searchError && searchResults.length === 0 && (
+          {!isSearchLoading && !searchError && getTotalResultsCount() === 0 && (
             <Typography color="text.secondary" sx={{px: 2, py:1}}>No results found.</Typography>
           )}
-          {!isSearchLoading && !searchError && searchResults.length > 0 && (
+          {!isSearchLoading && !searchError && getCurrentResults().length > 0 && (
             <List sx={{p: 0}}>
-              {searchResults.map((result) => (
+              {getCurrentResults().map((result) => (
                 <ListItem
                   button
                   key={`${result.book}-${result.chapter}-${result.verse}`}
@@ -360,6 +402,11 @@ export default function BibleReader({
                 </ListItem>
               ))}
             </List>
+          )}
+          {!isSearchLoading && !searchError && getCurrentResults().length === 0 && getTotalResultsCount() > 0 && (
+            <Typography color="text.secondary" sx={{px: 2, py: 2, textAlign: 'center'}}>
+              No results in {activeTab === 'NT' ? 'New Testament' : 'Old Testament'}
+            </Typography>
           )}
         </Box>
       </Drawer>

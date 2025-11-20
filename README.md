@@ -1,86 +1,175 @@
-# Berean Bible
+# Berean Bible Reader
 
-A modern web application for reading and studying the Bible, built with Next.js, Material-UI, and TypeScript. This project features AI-powered semantic search and verse-by-verse commentary, providing a rich, interactive experience for users.
+A modern, AI-enhanced Bible study application built with Next.js, Material-UI, and TypeScript. Experience scripture through intelligent semantic search, contextual AI commentary, and an intuitive reading interface designed for deep study and reflection.
 
-## Features
+## ✨ Key Features
 
--   📖 **Interactive Bible Reader**: A clean and intuitive interface for reading the Bible.
--   🧠 **AI-Powered Semantic Search**: Find verses based on meaning and context, not just keywords.
--   💡 **Verse-by-Verse Commentary**: Get AI-generated commentary for any verse, powered by Google's Gemini models.
--   ⚙️ **Configurable AI Model**: Choose which Gemini model to use for commentary via an environment variable.
--   📈 **Rate Limiting**: Built-in rate limiting for commentary generation to manage API costs.
--   📱 **Responsive Design**: A seamless experience across desktop and mobile devices.
--   🌙 **Dark/Light Theme**: Switch between dark and light modes for comfortable reading.
+### 📖 **Smart Bible Reader**
+- Clean, distraction-free reading interface
+- Keyboard navigation (arrow keys for chapter navigation)
+- Verse highlighting and smooth scrolling
+- Reading state persistence across sessions
+- Responsive design for all devices
 
-## Tech Stack
+### 🧠 **AI-Powered Semantic Search**
+- Find verses by meaning, not just keywords
+- Vector-based similarity search using embeddings
+- Results organized by Old/New Testament
+- Related verse discovery for cross-references
+- Copy search results functionality
 
--   **Framework**: [Next.js](https://nextjs.org/) 14
--   **Language**: [TypeScript](https://www.typescriptlang.org/)
--   **UI**: [Material-UI](https://mui.com/)
--   **AI**: [Google Gemini](https://ai.google.dev/)
--   **Database**: [MongoDB](https://www.mongodb.com/) (for caching and rate limiting)
+### 💡 **Intelligent Commentary System**
+- AI-generated verse-by-verse commentary using Google Gemini
+- Structured commentary with headings and context
+- Cross-reference suggestions within commentary
+- Commentary caching for performance
+- Rate limiting to manage API costs
 
-## Getting Started
+### 🎯 **Advanced User Experience**
+- Context menus for verse interactions
+- Drawer-based navigation for commentary and search
+- Theme switching (dark/light mode)
+- Local storage for user preferences
+- SEO-optimized with dynamic metadata
+
+## 🛠 Tech Stack
+
+-   **Frontend**: [Next.js](https://nextjs.org/) 14 with App Router
+-   **Language**: [TypeScript](https://www.typescriptlang.org/) for type safety
+-   **UI Framework**: [Material-UI](https://mui.com/) with Emotion styling
+-   **AI/ML**: [Google Gemini](https://ai.google.dev/) for embeddings and commentary
+-   **Database**: [MongoDB](https://www.mongodb.com/) with vector search capabilities
+-   **Analytics**: [Vercel Analytics](https://vercel.com/analytics) for insights
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
--   Node.js 18.0 or later
--   npm or yarn
--   Access to a MongoDB database
--   A Google Gemini API key
+-   **Node.js** 18.0 or later
+-   **npm** or **yarn** package manager
+-   **MongoDB** database with vector search capabilities
+-   **Google Gemini API** key for AI features
 
 ### Installation
 
-1.  Clone the repository:
-    ```bash
-    git clone https://github.com/nirajagarwal/bible-reader.git
-    cd bible-reader
-    ```
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/nirajagarwal/bible-reader.git
+   cd bible-reader
+   ```
 
-2.  Install dependencies:
-    ```bash
-    npm install
-    # or
-    yarn install
-    ```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-3.  Create a `.env.local` file in the root of your project and add the following environment variables.
+3. **Environment Configuration:**
+   
+   Create a `.env.local` file in the project root:
+   ```env
+   # MongoDB Configuration
+   MONGODB_URI=your_mongodb_connection_string
+   
+   # Google Gemini API Configuration
+   GEMINI_API_KEY=your_gemini_api_key
+   GEMINI_MODEL=gemini-2.5-pro-preview-06-05
+   
+   # Rate Limiting (Optional)
+   COMMENTARY_RATE_LIMIT_PER_DAY=1000
+   
+   # Deployment (Optional)
+   VERCEL_ENV=development
+   ```
 
-    ```env
-    # For connecting to your MongoDB database
-    MONGODB_URI=your_mongodb_connection_string
+4. **Database Setup:**
+   ```bash
+   # Set up Bible data and embeddings
+   npm run db:setup
+   
+   # Generate sitemap
+   npm run generate-sitemap
+   ```
 
-    # Your Google Gemini API Key
-    GEMINI_API_KEY=your_gemini_api_key
+### Development
 
-    # (Optional) Specify the Gemini model to use for commentary
-    # Defaults to gemini-1.5-flash-latest
-    GEMINI_MODEL=gemini-1.5-flash-latest
+```bash
+# Start development server
+npm run dev
 
-    # (Optional) Set a daily rate limit for commentary generation
-    # Defaults to 1000
-    COMMENTARY_RATE_LIMIT_PER_DAY=1000
-    ```
+# Build for production
+npm run build
 
-### Running the Application
+# Start production server
+npm run start
+```
 
-1.  Run the development server:
-    ```bash
-    npm run dev
-    ```
+Visit [http://localhost:3000](http://localhost:3000) to see your application.
 
-2.  Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+## 📖 Usage Guide
 
-## Usage
+### Navigation
+- **Chapter Navigation**: Use arrow keys (←/→) or navigation buttons
+- **Verse Selection**: Click any verse to access commentary and related verses
+- **Search**: Use the search bar for semantic verse discovery
 
--   **Reading**: Use the navigation controls to select a book and chapter.
--   **Commentary**: Click on any verse to open a drawer with AI-generated commentary.
--   **Search**: Use the search bar to find verses using natural language.
+### Features
+- **Commentary**: Right-click or tap verses for AI-generated insights
+- **Related Verses**: Find thematically similar passages
+- **Search Results**: Organized by Testament with copy functionality
+- **Theme Toggle**: Switch between light and dark modes
+- **Reading State**: Automatically saves your current position
 
-## Contributing
+## 🏗 Project Structure
 
-Contributions are welcome! If you have suggestions or want to improve the project, please feel free to open an issue or submit a pull request.
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── [slug]/            # Dynamic Bible chapter routes
+│   ├── api/               # API endpoints
+│   │   ├── commentary/    # AI commentary generation
+│   │   ├── search/        # Semantic search
+│   │   └── verses/        # Bible text retrieval
+│   └── layout.tsx         # Root layout with providers
+├── components/            # React components
+│   ├── BibleReader.tsx    # Main reading interface
+│   └── Navigation.tsx     # App navigation
+├── context/              # React context providers
+├── lib/                  # Utilities and data
+└── types/                # TypeScript definitions
+```
 
-## License
+## 🔧 API Endpoints
 
-This project is licensed under the MIT License - see the `LICENSE` file for details. 
+- **GET** `/api/verses` - Retrieve chapter verses
+- **POST** `/api/search` - Semantic verse search
+- **POST** `/api/commentary` - Generate AI commentary
+- **GET** `/api/og` - Dynamic Open Graph images
+
+## 🤝 Contributing
+
+We welcome contributions! Here's how you can help:
+
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
+
+### Development Guidelines
+- Follow TypeScript best practices
+- Use Material-UI components consistently
+- Write meaningful commit messages
+- Test your changes thoroughly
+
+## 📄 License
+
+This project is licensed under the MIT License - see the `LICENSE` file for details.
+
+## 🙏 Acknowledgments
+
+- Bible text data processing and embedding
+- Google Gemini AI for intelligent commentary
+- Material-UI for the beautiful interface
+- MongoDB for vector search capabilities 

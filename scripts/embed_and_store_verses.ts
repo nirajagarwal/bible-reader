@@ -23,7 +23,7 @@ if (!GEMINI_API_KEY || !MONGO_URI) {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
+const model = genAI.getGenerativeModel({ model: 'text-embedding-005' });
 const client = new MongoClient(MONGO_URI);
 
 async function embedAndStore() {

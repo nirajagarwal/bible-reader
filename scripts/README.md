@@ -4,7 +4,7 @@ This project contains a Node.js script designed to process Bible verses from a J
 
 ## Features
 
-- **Vector Embeddings**: Uses Google's `text-embedding-005` model to create high-quality vector representations of each Bible verse.
+- **Vector Embeddings**: Uses Google's `text-embedding-004` model to create high-quality vector representations of each Bible verse.
 - **MongoDB Storage**: Stores verses along with their embeddings in a MongoDB collection, ready for vector search.
 - **Resumable**: If the script is interrupted, it can be restarted and will automatically resume from where it left off, preventing duplicate processing.
 - **Robust Error Handling**: Implements a retry mechanism with exponential backoff for handling transient API errors.

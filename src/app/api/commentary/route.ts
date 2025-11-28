@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { MongoClient } from 'mongodb';
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-pro-preview-06-05';
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-pro';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-preview-06-05:generateContent';
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 const MONGO_URI = process.env.MONGODB_URI;
 const DB_NAME = 'knowra';
 const COLLECTION_NAME = 'bible';

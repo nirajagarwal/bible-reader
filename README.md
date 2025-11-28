@@ -74,7 +74,7 @@ A modern, AI-enhanced Bible study application built with Next.js, Material-UI, a
    
    # Google Gemini API Configuration
    GEMINI_API_KEY=your_gemini_api_key
-   GEMINI_MODEL=gemini-2.5-pro-preview-06-05
+   GEMINI_MODEL=gemini-2.5-pro
    
    # Rate Limiting (Optional)
    COMMENTARY_RATE_LIMIT_PER_DAY=1000

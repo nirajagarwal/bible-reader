@@ -469,8 +469,8 @@ export default function BibleReader({
                   onClick={() => handleSearchResultClick(result)}
                   sx={{
                     borderBottom: `1px solid ${theme.palette.divider}`,
-                    px: 3,
-                    py: 1.5,
+                    px: 2.5,
+                    py: 0.75,
                     transition: 'background-color 120ms ease',
                     '&:hover': {
                       backgroundColor: alpha(theme.palette.secondary.main, 0.06),
@@ -478,27 +478,36 @@ export default function BibleReader({
                   }}
                 >
                   <ListItemText
-                    primary={result.text}
-                    secondary={`${result.book} ${result.chapter}:${result.verse}`}
-                    primaryTypographyProps={{
-                      sx: {
-                        fontFamily: 'var(--font-serif), serif',
-                        fontSize: '0.98rem',
-                        lineHeight: 1.55,
-                        color: 'text.primary',
-                      },
-                    }}
-                    secondaryTypographyProps={{
-                      sx: {
-                        fontFamily: 'var(--font-sans), sans-serif',
-                        fontSize: '0.75rem',
-                        letterSpacing: '0.04em',
-                        textTransform: 'uppercase',
-                        color: 'secondary.main',
-                        mt: 0.5,
-                        fontWeight: 600,
-                      },
-                    }}
+                    disableTypography
+                    primary={
+                      <Typography
+                        sx={{
+                          fontFamily: 'var(--font-serif), serif',
+                          fontSize: '0.95rem',
+                          lineHeight: 1.4,
+                          color: 'text.primary',
+                        }}
+                      >
+                        {result.text}
+                      </Typography>
+                    }
+                    secondary={
+                      <Typography
+                        component="span"
+                        sx={{
+                          display: 'block',
+                          fontFamily: 'var(--font-sans), sans-serif',
+                          fontSize: '0.62rem',
+                          letterSpacing: '0.05em',
+                          textTransform: 'uppercase',
+                          color: 'secondary.main',
+                          mt: 0.25,
+                          fontWeight: 600,
+                        }}
+                      >
+                        {`${result.book} ${result.chapter}:${result.verse}`}
+                      </Typography>
+                    }
                   />
                 </ListItem>
               ))}

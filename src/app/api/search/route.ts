@@ -83,8 +83,10 @@ export async function POST(request: Request) {
     const verseDoc = await collection.findOne({ text: query });
 
     if (verseDoc) {
-      // If it's a related verse search, check for cached 'relatedVerses'
-      if (verseDoc.relatedVerses) {
+      // If it's a related verse search, check for cached 'relatedVerses'.
+      // Use length check — empty arrays from prior failed searches are truthy
+      // and would otherwise lock the verse into "no results" forever.
+      if (Array.isArray(verseDoc.relatedVerses) && verseDoc.relatedVerses.length > 0) {
         const separatedResults = separateByTestament(verseDoc.relatedVerses);
         return NextResponse.json(separatedResults);
       }

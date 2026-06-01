@@ -324,18 +324,12 @@ export default function Navigation({
               <SearchIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.35rem' } }} />
             </IconButton>
             <InputBase
-              placeholder="Semantic search…"
               sx={(theme) => ({
                 ml: { xs: 0.5, sm: 1 },
                 flex: 1,
                 fontFamily: 'var(--font-sans), sans-serif',
                 fontSize: '0.92rem',
                 color: theme.palette.text.primary,
-                '& input::placeholder': {
-                  color: theme.palette.text.secondary,
-                  opacity: 0.7,
-                  fontStyle: 'italic',
-                },
               })}
               inputRef={searchInputRef}
               value={searchQuery}

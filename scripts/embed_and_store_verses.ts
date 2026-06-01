@@ -1,29 +1,28 @@
 import dotenv from 'dotenv';
 import { MongoClient } from 'mongodb';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { embedMany } from 'ai';
 import * as fs from 'fs';
 import * as path from 'path';
 
 dotenv.config({ path: '.env.local' });
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const AI_GATEWAY_API_KEY = process.env.AI_GATEWAY_API_KEY;
+const AI_EMBEDDING_MODEL = process.env.AI_EMBEDDING_MODEL || 'google/text-embedding-005';
 const MONGO_URI = process.env.MONGODB_URI;
-const DB_NAME = 'knowra';
-const COLLECTION_NAME = 'bible';
+const DB_NAME = 'bible';
+const COLLECTION_NAME = 'verses';
 
-const CHUNK_SIZE = 99; // Stay under the 100 limit for batchEmbedContents
+const CHUNK_SIZE = 99;
 const RETRY_LIMIT = 5;
-const RETRY_DELAY = 5000; // 5 seconds
+const RETRY_DELAY = 5000;
 
-if (!GEMINI_API_KEY || !MONGO_URI) {
+if (!AI_GATEWAY_API_KEY || !MONGO_URI) {
   throw new Error(
-    'Please provide GEMINI_API_KEY and MONGODB_URI in your .env file'
+    'Please provide AI_GATEWAY_API_KEY and MONGODB_URI in your .env file'
   );
 }
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
 const client = new MongoClient(MONGO_URI);
 
 async function embedAndStore() {
@@ -92,30 +91,29 @@ async function embedAndStore() {
       console.log(`\nProcessing batch ${Math.floor(i / CHUNK_SIZE) + 1} of ${Math.ceil((allVerses.length - startingIndex) / CHUNK_SIZE)} (verses ${i + 1}-${i + batch.length} of ${allVerses.length})`);
 
       const textsToEmbed = batch.map((v) => v.text);
-      let embeddings;
+      let embeddings: number[][] | undefined;
 
-      // --- Retry Logic ---
       for (let attempt = 1; attempt <= RETRY_LIMIT; attempt++) {
         try {
-          const result = await model.batchEmbedContents({
-            requests: textsToEmbed.map((text) => ({
-              content: { role: 'user', parts: [{ text }] },
-            })),
+          const result = await embedMany({
+            model: AI_EMBEDDING_MODEL,
+            values: textsToEmbed,
           });
           embeddings = result.embeddings;
           console.log(`Successfully generated ${embeddings.length} embeddings.`);
-          break; // Break loop on success
+          break;
         } catch (error: any) {
-          if (attempt < RETRY_LIMIT && error.status >= 500) {
-            console.warn(`Attempt ${attempt} failed with server error (${error.status}). Retrying in ${RETRY_DELAY / 1000}s...`);
+          const status = error?.statusCode ?? error?.status;
+          if (attempt < RETRY_LIMIT && (status === undefined || status >= 500)) {
+            console.warn(`Attempt ${attempt} failed (${status ?? error?.message}). Retrying in ${RETRY_DELAY / 1000}s...`);
             await sleep(RETRY_DELAY);
           } else {
             console.error('An unrecoverable error occurred during embedding:', error);
-            throw error; // Re-throw on final attempt or non-retriable error
+            throw error;
           }
         }
       }
-      
+
       if (!embeddings || embeddings.length !== batch.length) {
         console.warn(`Could not generate embeddings for this batch. Skipping.`);
         continue;
@@ -123,7 +121,7 @@ async function embedAndStore() {
 
       const documents = batch.map((verse, index) => ({
         ...verse,
-        embedding: embeddings[index].values,
+        embedding: embeddings![index],
       }));
 
       await collection.insertMany(documents);

@@ -31,6 +31,8 @@ A modern, AI-enhanced Bible study application built with Next.js, Material-UI, a
 - Theme switching (dark/light mode)
 - Local storage for user preferences
 - SEO-optimized with dynamic metadata
+- Automated sitemap generation
+- Dynamic Open Graph images for social sharing
 
 ## 🛠 Tech Stack
 

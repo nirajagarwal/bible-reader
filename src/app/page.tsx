@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation';
 import localforage from 'localforage';
 import { ReadingState } from '@/types/bible';
 import { Box } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { ScaleLoader } from 'react-spinners';
 
 export default function HomePage() {
   const router = useRouter();
+  const theme = useTheme();
 
   useEffect(() => {
     const checkLastRead = async () => {
@@ -38,7 +40,7 @@ export default function HomePage() {
         height: '100vh' 
       }}
     >
-      <ScaleLoader color="grey" />
+      <ScaleLoader color={theme.palette.secondary.main} />
     </Box>
   );
 } 

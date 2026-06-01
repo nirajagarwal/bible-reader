@@ -21,6 +21,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import { alpha } from '@mui/material/styles';
 
 interface NavigationProps {
   currentBook: string | null;
@@ -175,14 +176,20 @@ export default function Navigation({
           style: { maxHeight: '80vh', width: 'auto', minWidth: 300 },
         }}
       >
-        <Box sx={{ p: 2, display: 'flex', flexWrap: 'wrap', gap: 1, maxHeight: '70vh', overflow: 'auto' }}>
+        <Box sx={{ p: 2, display: 'flex', flexWrap: 'wrap', gap: 0.75, maxHeight: '70vh', overflow: 'auto' }}>
           {Array.from({ length: totalChapters }, (_, i) => i + 1).map((chapter) => (
             <Button
               key={chapter}
-              variant="contained"
+              variant={chapter === currentChapter ? 'contained' : 'outlined'}
               size="small"
               onClick={() => handleChapterSelect(chapter)}
-              sx={{ minWidth: 40, height: 40, p: 0 }}
+              sx={{
+                minWidth: 40,
+                height: 40,
+                p: 0,
+                fontFamily: 'var(--font-serif), serif',
+                fontWeight: 600,
+              }}
             >
               {chapter}
             </Button>
@@ -216,28 +223,35 @@ export default function Navigation({
         >
           {currentBook && (
             <>
-          <Button 
+          <Button
             variant="contained"
-            onClick={handleBookClick} 
-            sx={{ 
-              textOverflow: 'ellipsis', 
-              overflow: 'hidden', 
-              whiteSpace: 'nowrap', 
-              minWidth: 0, 
+            onClick={handleBookClick}
+            sx={{
+              fontFamily: 'var(--font-serif), serif',
+              fontWeight: 600,
+              fontSize: '1rem',
+              letterSpacing: '0.01em',
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              minWidth: 0,
               display: 'block',
-              maxWidth: { xs: '120px', sm: '200px' }
+              maxWidth: { xs: '120px', sm: '220px' },
+              px: { xs: 1.25, sm: 2 },
             }}
           >
             {currentBook}
           </Button>
-          <Button 
-            variant="contained"
+          <Button
+            variant="outlined"
             onClick={handleChapterClick}
             sx={{
               minWidth: 36,
               height: 36,
               p: 0,
-              ml: { xs: 0.5, sm: 1 }
+              ml: { xs: 0.5, sm: 1 },
+              fontFamily: 'var(--font-serif), serif',
+              fontWeight: 600,
             }}
           >
             {currentChapter}
@@ -260,25 +274,44 @@ export default function Navigation({
             elevation={0}
             variant="outlined"
             onSubmit={handleSearchSubmit}
-            sx={{ 
-              p: '2px 4px', 
-              display: 'flex', 
-              alignItems: 'center', 
+            sx={(theme) => ({
+              p: '2px 4px',
+              display: 'flex',
+              alignItems: 'center',
               width: '100%',
-              maxWidth: '400px',
-              borderRadius: '8px',
+              maxWidth: '420px',
+              borderRadius: '999px',
               height: 38,
-            }}
+              borderColor: theme.palette.divider,
+              backgroundColor: alpha(theme.palette.secondary.main, theme.palette.mode === 'dark' ? 0.06 : 0.05),
+              transition: 'border-color 150ms ease, box-shadow 150ms ease',
+              '&:focus-within': {
+                borderColor: theme.palette.secondary.main,
+                boxShadow: `0 0 0 3px ${alpha(theme.palette.secondary.main, 0.18)}`,
+              },
+            })}
           >
-            <IconButton 
-              type="submit" 
-              sx={{ p: { xs: '2px', sm: '4px' } }} 
+            <IconButton
+              type="submit"
+              sx={{ p: { xs: '2px', sm: '4px' } }}
               aria-label="search"
             >
-              <SearchIcon sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }} />
+              <SearchIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.35rem' } }} />
             </IconButton>
             <InputBase
-              sx={{ ml: { xs: 0.5, sm: 1 }, flex: 1 }}
+              placeholder="Semantic search…"
+              sx={(theme) => ({
+                ml: { xs: 0.5, sm: 1 },
+                flex: 1,
+                fontFamily: 'var(--font-sans), sans-serif',
+                fontSize: '0.92rem',
+                color: theme.palette.text.primary,
+                '& input::placeholder': {
+                  color: theme.palette.text.secondary,
+                  opacity: 0.7,
+                  fontStyle: 'italic',
+                },
+              })}
               inputRef={searchInputRef}
               value={searchQuery}
               onChange={(e) => onSearchQueryChange(e.target.value)}
@@ -287,21 +320,21 @@ export default function Navigation({
         </Box>
 
         <Box sx={{ flex: '1 0 auto', display: 'flex', justifyContent: 'flex-end' }}>
-          <Button 
-            variant="contained"
-            onClick={() => onChapterChange('prev')} 
+          <Button
+            variant="outlined"
+            onClick={() => onChapterChange('prev')}
             disabled={!hasPrevChapter}
             sx={{ minWidth: 36, height: 36, p: 0 }}
           >
-            <NavigateBeforeIcon />
+            <NavigateBeforeIcon fontSize="small" />
           </Button>
-          <Button 
-            variant="contained"
-            onClick={() => onChapterChange('next')} 
+          <Button
+            variant="outlined"
+            onClick={() => onChapterChange('next')}
             disabled={!hasNextChapter}
             sx={{ minWidth: 36, height: 36, p: 0, ml: { xs: 0.5, sm: 1 } }}
           >
-            <NavigateNextIcon />
+            <NavigateNextIcon fontSize="small" />
           </Button>
         </Box>
       </Toolbar>

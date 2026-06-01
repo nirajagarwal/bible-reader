@@ -1,9 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-// This is a placeholder. Replace with your actual domain.
-const BASE_URL = 'https://berean-bible.vercel.app';
-const LAST_MOD = '2025-06-25';
+const BASE_URL = 'https://bereanbible.online';
+const LAST_MOD = new Date().toISOString().split('T')[0];
 
 interface BibleData {
   [book: string]: {

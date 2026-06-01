@@ -14,7 +14,7 @@ import {
   Tabs,
   Tab,
 } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, alpha } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -228,41 +228,61 @@ export default function BibleReader({
         sx={{
           flex: 1,
           overflow: 'auto',
-          p: 0,
-          '& > *': { mb: 2 },
+          py: { xs: 3, sm: 5 },
+          px: { xs: 2, sm: 4 },
+          display: 'flex',
+          justifyContent: 'center',
         }}
       >
-        {verses && verses.map((verse) => (
-          <Typography
-            ref={verse.verse === highlightedVerse ? highlightedVerseRef : null}
-            key={`${verse.chapter}-${verse.verse}`}
-            variant="body1"
-            sx={{
-              cursor: 'pointer',
-              '&:hover': { backgroundColor: 'action.hover' },
-              px: 2, py: 0.5,
-              borderRadius: 0,
-              fontWeight: verse.verse === highlightedVerse ? 'bold' : 'normal',
-              border: `1px solid ${verse.verse === highlightedVerse ? 'orange' : 'transparent'}`,
-            }}
-            onClick={(event) => handleVerseClick(event, verse)}
-          >
-            <Typography
-              component="sup"
-              variant="caption"
-              color="text.secondary"
-              sx={{ 
-                mr: 0.5,
-                fontSize: '0.75rem',
-                verticalAlign: 'super',
-                lineHeight: 0
-              }}
-            >
-              {verse.verse}
-            </Typography>
-            {verse.text}
-          </Typography>
-        ))}
+        <Box sx={{ maxWidth: '720px', width: '100%' }}>
+          {verses && verses.map((verse) => {
+            const isHighlighted = verse.verse === highlightedVerse;
+            return (
+              <Typography
+                ref={isHighlighted ? highlightedVerseRef : null}
+                key={`${verse.chapter}-${verse.verse}`}
+                variant="body1"
+                sx={{
+                  cursor: 'pointer',
+                  position: 'relative',
+                  px: { xs: 1.5, sm: 2 },
+                  py: 1,
+                  mb: 0.5,
+                  borderRadius: 1,
+                  borderLeft: '3px solid',
+                  borderLeftColor: isHighlighted ? 'secondary.main' : 'transparent',
+                  backgroundColor: isHighlighted
+                    ? alpha(theme.palette.secondary.main, theme.palette.mode === 'dark' ? 0.10 : 0.08)
+                    : 'transparent',
+                  transition: 'background-color 120ms ease, border-color 120ms ease',
+                  '&:hover': {
+                    backgroundColor: isHighlighted
+                      ? alpha(theme.palette.secondary.main, theme.palette.mode === 'dark' ? 0.14 : 0.12)
+                      : alpha(theme.palette.secondary.main, theme.palette.mode === 'dark' ? 0.06 : 0.05),
+                  },
+                }}
+                onClick={(event) => handleVerseClick(event, verse)}
+              >
+                <Typography
+                  component="sup"
+                  sx={{
+                    mr: 0.6,
+                    fontFamily: 'var(--font-sans), sans-serif',
+                    fontSize: '0.7rem',
+                    fontWeight: 600,
+                    letterSpacing: '0.02em',
+                    color: 'secondary.main',
+                    verticalAlign: 'super',
+                    lineHeight: 0,
+                  }}
+                >
+                  {verse.verse}
+                </Typography>
+                {verse.text}
+              </Typography>
+            );
+          })}
+        </Box>
       </Box>
 
       <Drawer
@@ -271,7 +291,7 @@ export default function BibleReader({
         onClose={handleCloseCommentary}
         sx={{
           '& .MuiDrawer-paper': {
-            width: { xs: '100%', sm: 480 },
+            width: { xs: '100%', sm: 520 },
             boxSizing: 'border-box',
             backgroundColor: theme.palette.background.paper,
           },
@@ -279,34 +299,80 @@ export default function BibleReader({
       >
         <Box
           sx={{
-            px: 2,
-            py: 1,
+            px: 3,
+            py: 1.5,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            borderBottom: 1,
-            borderColor: 'divider',
+            borderBottom: `1px solid ${theme.palette.divider}`,
             flexShrink: 0,
           }}
         >
-          <Typography variant="h6" component="div">
-            {loading ? 'Generating...' : 'Commentary'}
-          </Typography>
-          <Box>
-            <IconButton onClick={handleCloseCommentary}>
-              <CloseIcon />
-            </IconButton>
+          <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.25 }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'secondary.main',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                fontWeight: 600,
+                fontSize: '0.65rem',
+              }}
+            >
+              {loading ? 'Generating' : 'Commentary'}
+            </Typography>
+            {selectedVerse && (
+              <Typography
+                variant="body2"
+                sx={{
+                  fontFamily: 'var(--font-serif), serif',
+                  fontStyle: 'italic',
+                  color: 'text.secondary',
+                }}
+              >
+                {selectedVerse.book} {selectedVerse.chapter}:{selectedVerse.verse}
+              </Typography>
+            )}
           </Box>
+          <IconButton onClick={handleCloseCommentary} size="small">
+            <CloseIcon fontSize="small" />
+          </IconButton>
         </Box>
-        
-        <Box sx={{ flex: 1, p:2, pt:0, overflowY: 'auto' }}>
+
+        <Box
+          sx={{
+            flex: 1,
+            px: 3,
+            py: 2,
+            overflowY: 'auto',
+            '& h1, & h2, & h3, & h4': {
+              fontFamily: 'var(--font-serif), serif',
+              color: 'primary.main',
+              mt: 2.5,
+              mb: 1,
+              lineHeight: 1.3,
+            },
+            '& h1': { fontSize: '1.5rem' },
+            '& h2': { fontSize: '1.25rem' },
+            '& h3': { fontSize: '1.1rem' },
+            '& p': {
+              fontFamily: 'var(--font-serif), serif',
+              fontSize: '1rem',
+              lineHeight: 1.7,
+              mb: 1.5,
+              color: 'text.primary',
+            },
+            '& em': { color: 'secondary.main' },
+            '& strong': { color: 'primary.main' },
+          }}
+        >
           {loading && (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-              <ScaleLoader color={theme.palette.text.secondary} />
+              <ScaleLoader color={theme.palette.secondary.main} />
             </Box>
           )}
           {!loading && commentaryError && (
-            <Typography color="error" sx={{p: 2, textAlign: 'center'}}>
+            <Typography color="error" sx={{ p: 2, textAlign: 'center' }}>
               {commentaryError}
             </Typography>
           )}
@@ -320,7 +386,7 @@ export default function BibleReader({
         onClose={onCloseSearchDrawer}
         sx={{
           '& .MuiDrawer-paper': {
-            width: { xs: '100%', sm: 480 },
+            width: { xs: '100%', sm: 520 },
             boxSizing: 'border-box',
             display: 'flex',
             flexDirection: 'column',
@@ -330,81 +396,114 @@ export default function BibleReader({
       >
         <Box
           sx={{
-            px: 2,
-            py: 1,
+            px: 3,
+            py: 1.5,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            borderBottom: 1,
-            borderColor: 'divider',
+            borderBottom: `1px solid ${theme.palette.divider}`,
             flexShrink: 0,
           }}
         >
-          <Typography variant="h6" component="div">
+          <Typography
+            variant="caption"
+            sx={{
+              color: 'secondary.main',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              fontWeight: 600,
+              fontSize: '0.65rem',
+            }}
+          >
             Search Results
+            {getTotalResultsCount() > 0 && (
+              <Box component="span" sx={{ ml: 1, color: 'text.secondary', fontWeight: 400 }}>
+                · {getTotalResultsCount()}
+              </Box>
+            )}
           </Typography>
           <Box>
             {getTotalResultsCount() > 0 && (
-              <IconButton color="inherit" onClick={handleCopySearchResults}>
-                <ContentCopyIcon />
+              <IconButton onClick={handleCopySearchResults} size="small">
+                <ContentCopyIcon fontSize="small" />
               </IconButton>
             )}
-            <IconButton color="inherit" onClick={onCloseSearchDrawer}>
-              <CloseIcon />
+            <IconButton onClick={onCloseSearchDrawer} size="small">
+              <CloseIcon fontSize="small" />
             </IconButton>
           </Box>
         </Box>
-        
-        {/* Tabs for Old/New Testament */}
+
         {!isSearchLoading && !searchError && getTotalResultsCount() > 0 && (
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
-            <Tabs 
-              value={activeTab === 'NT' ? 0 : 1} 
+          <Box sx={{ borderBottom: `1px solid ${theme.palette.divider}`, flexShrink: 0 }}>
+            <Tabs
+              value={activeTab === 'NT' ? 0 : 1}
               onChange={handleTabChange}
-              sx={{ minHeight: 48 }}
+              variant="fullWidth"
+              sx={{ minHeight: 44 }}
             >
-              <Tab 
-                label="New Testament"
-                sx={{ minHeight: 48, textTransform: 'none' }}
-              />
-              <Tab 
-                label="Old Testament"
-                sx={{ minHeight: 48, textTransform: 'none' }}
-              />
+              <Tab label={`New Testament (${newTestamentResults.length})`} sx={{ minHeight: 44 }} />
+              <Tab label={`Old Testament (${oldTestamentResults.length})`} sx={{ minHeight: 44 }} />
             </Tabs>
           </Box>
         )}
-        
+
         <Box sx={{ flex: 1, overflowY: 'auto' }}>
-          {isSearchLoading && <Box sx={{display: 'flex', justifyContent: 'center', p: 4}}><ScaleLoader color={theme.palette.text.secondary} /></Box>}
-          {searchError && <Typography color="error" sx={{px: 2}}>{searchError}</Typography>}
+          {isSearchLoading && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+              <ScaleLoader color={theme.palette.secondary.main} />
+            </Box>
+          )}
+          {searchError && <Typography color="error" sx={{ px: 3, py: 2 }}>{searchError}</Typography>}
           {!isSearchLoading && !searchError && getTotalResultsCount() === 0 && (
-            <Typography color="text.secondary" sx={{px: 2, py:1}}>No results found.</Typography>
+            <Typography color="text.secondary" sx={{ px: 3, py: 2 }}>No results found.</Typography>
           )}
           {!isSearchLoading && !searchError && getCurrentResults().length > 0 && (
-            <List sx={{p: 0}}>
+            <List sx={{ p: 0 }}>
               {getCurrentResults().map((result) => (
                 <ListItem
                   button
                   key={`${result.book}-${result.chapter}-${result.verse}`}
                   onClick={() => handleSearchResultClick(result)}
                   sx={{
-                    borderBottom: 1,
-                    borderColor: 'divider',
-                    px: 2,
-                    py: 0,
+                    borderBottom: `1px solid ${theme.palette.divider}`,
+                    px: 3,
+                    py: 1.5,
+                    transition: 'background-color 120ms ease',
+                    '&:hover': {
+                      backgroundColor: alpha(theme.palette.secondary.main, 0.06),
+                    },
                   }}
                 >
                   <ListItemText
-                    secondary={`${result.book} ${result.chapter}:${result.verse}`}
                     primary={result.text}
+                    secondary={`${result.book} ${result.chapter}:${result.verse}`}
+                    primaryTypographyProps={{
+                      sx: {
+                        fontFamily: 'var(--font-serif), serif',
+                        fontSize: '0.98rem',
+                        lineHeight: 1.55,
+                        color: 'text.primary',
+                      },
+                    }}
+                    secondaryTypographyProps={{
+                      sx: {
+                        fontFamily: 'var(--font-sans), sans-serif',
+                        fontSize: '0.75rem',
+                        letterSpacing: '0.04em',
+                        textTransform: 'uppercase',
+                        color: 'secondary.main',
+                        mt: 0.5,
+                        fontWeight: 600,
+                      },
+                    }}
                   />
                 </ListItem>
               ))}
             </List>
           )}
           {!isSearchLoading && !searchError && getCurrentResults().length === 0 && getTotalResultsCount() > 0 && (
-            <Typography color="text.secondary" sx={{px: 2, py: 2, textAlign: 'center'}}>
+            <Typography color="text.secondary" sx={{ px: 3, py: 2, textAlign: 'center' }}>
               No results in {activeTab === 'NT' ? 'New Testament' : 'Old Testament'}
             </Typography>
           )}

@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { MongoClient } from 'mongodb';
+import { generateText } from 'ai';
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-pro';
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+const AI_MODEL = process.env.AI_MODEL || 'google/gemini-3.5-flash';
+const AI_GATEWAY_API_KEY = process.env.AI_GATEWAY_API_KEY;
 const MONGO_URI = process.env.MONGODB_URI;
-const DB_NAME = 'knowra';
-const COLLECTION_NAME = 'bible';
+const DB_NAME = 'bible';
+const COLLECTION_NAME = 'verses';
 const COMMENTARY_RATE_LIMIT = parseInt(process.env.COMMENTARY_RATE_LIMIT_PER_DAY || '1000', 10);
 
 if (!MONGO_URI) {
@@ -79,41 +79,21 @@ export async function POST(request: Request) {
     }
 
     // 2. If not found, generate new commentary
-    if (!GEMINI_API_KEY) {
+    if (!AI_GATEWAY_API_KEY) {
       return NextResponse.json(
-        { error: 'Gemini API key is not configured' },
+        { error: 'AI Gateway API key is not configured' },
         { status: 500 }
       );
     }
 
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: `You are a Bible scholar that can synthesize diverse points of view into a modern and insightful commentary. 
-                Please provide a structured commentary on the following verse using paragraphs and upto 3 levels of headings. Avoid using lists. 
+    const { text: newCommentary } = await generateText({
+      model: AI_MODEL,
+      prompt: `You are a Bible scholar that can synthesize diverse points of view into a modern and insightful commentary.
+                Please provide a structured commentary on the following verse using paragraphs and upto 3 levels of headings. Avoid using lists.
                 Where relevant, point out related verses or themes in the Bible to add context.
                 Just the content, no preamble or postamble.
-                Verse: ${text}`
-              }
-            ]
-          }
-        ]
-      })
+                Verse: ${text}`,
     });
-
-    if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    const newCommentary = data.candidates[0].content.parts[0].text;
 
     // 3. Store the new commentary in MongoDB
     await collection.updateOne(

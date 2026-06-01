@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { MongoClient } from 'mongodb';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { embed } from 'ai';
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const AI_GATEWAY_API_KEY = process.env.AI_GATEWAY_API_KEY;
+const AI_EMBEDDING_MODEL = process.env.AI_EMBEDDING_MODEL || 'google/text-embedding-005';
 const MONGO_URI = process.env.MONGODB_URI;
-const DB_NAME = 'knowra';
-const COLLECTION_NAME = 'bible';
+const DB_NAME = 'bible';
+const COLLECTION_NAME = 'verses';
 const SIMILARITY_THRESHOLD = 0.7; // Adjust as needed
 
 // Define the book order for proper sorting
@@ -56,12 +57,10 @@ function separateByTestament(results: any[]) {
   };
 }
 
-if (!GEMINI_API_KEY || !MONGO_URI) {
+if (!AI_GATEWAY_API_KEY || !MONGO_URI) {
   throw new Error('API keys are not configured in environment variables');
 }
 
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
 const client = new MongoClient(MONGO_URI);
 
 async function connectToDb() {
@@ -91,8 +90,10 @@ export async function POST(request: Request) {
       }
     }
 
-    const queryEmbedding = await model.embedContent(query);
-    const queryVector = queryEmbedding.embedding.values;
+    const { embedding: queryVector } = await embed({
+      model: AI_EMBEDDING_MODEL,
+      value: query,
+    });
 
     const pipeline = [
       {

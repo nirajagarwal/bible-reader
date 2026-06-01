@@ -1,11 +1,9 @@
 import { Metadata } from 'next';
 import { BiblePageClient } from './BiblePageClient';
-import { fetchBibleStructure } from '@/lib/bibleData';
 import { getBookList, getChapterCount } from '@/lib/bibleUtils';
 import { Verse } from '@/types/bible';
 import _bibleData from '@/lib/bible_data.json';
 import { BibleData } from '@/types/bibleData';
-import { ImageResponse } from '@vercel/og';
 
 const bibleData = _bibleData as BibleData;
 
@@ -53,43 +51,49 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const bookName = bookParts.join(' ');
   const foundBook = bookList.find(b => b.toLowerCase() === bookName.toLowerCase());
 
-  const baseTitle = 'Berean Bible Reader';
-  const baseDescription = 'Read with in-depth AI commentary for each verse and semantic search to find related verses for self-study.';
+  const baseDescription =
+    'Read with in-depth AI commentary on every verse and semantic search to find related passages.';
 
   if (!foundBook || !chapterNum) {
     return {
-      title: baseTitle,
+      title: 'Berean Bible',
       description: baseDescription,
     };
   }
-  
+
   const verses = await getVersesForChapter(foundBook, chapterNum);
-  
-  let title = `${baseTitle} - ${foundBook} ${chapterNum}`;
-  let description;
+
+  let pageTitle: string;
+  let description: string;
+  let canonical: string;
 
   if (verseNum && verses[verseNum - 1]) {
-    title = `${baseTitle} - ${foundBook} ${chapterNum}:${verseNum}`;
+    pageTitle = `${foundBook} ${chapterNum}:${verseNum}`;
     description = verses[verseNum - 1].text;
+    canonical = `/${foundBook.replace(/ /g, '-').toLowerCase()}-${chapterNum}-${verseNum}`;
   } else {
-    description = verses.length > 0 ? verses[0].text.substring(0, 150) + '...' : baseDescription;
+    pageTitle = `${foundBook} ${chapterNum}`;
+    description =
+      verses.length > 0
+        ? verses[0].text.substring(0, 155) + (verses[0].text.length > 155 ? '…' : '')
+        : baseDescription;
+    canonical = `/${foundBook.replace(/ /g, '-').toLowerCase()}-${chapterNum}`;
   }
 
-  const ogDescription = verses.length > 0 ? verses[0].text.substring(0, 150) + '...' : baseDescription;
-
   return {
-    title,
+    title: pageTitle,
     description,
+    alternates: { canonical },
     openGraph: {
-      title,
+      title: pageTitle,
       description,
-      images: ['/og.png'],
+      type: 'article',
+      url: canonical,
     },
     twitter: {
       card: 'summary_large_image',
-      title,
+      title: pageTitle,
       description,
-      images: ['/og.png'],
     },
   };
 }

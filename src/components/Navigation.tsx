@@ -21,6 +21,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { alpha } from '@mui/material/styles';
 
 interface NavigationProps {
@@ -226,32 +227,56 @@ export default function Navigation({
           <Button
             variant="contained"
             onClick={handleBookClick}
+            aria-haspopup="true"
+            aria-expanded={Boolean(bookAnchorEl)}
+            endIcon={<ArrowDropDownIcon />}
             sx={{
               fontFamily: 'var(--font-serif), serif',
               fontWeight: 600,
               fontSize: '1rem',
               letterSpacing: '0.01em',
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
               minWidth: 0,
-              display: 'block',
-              maxWidth: { xs: '120px', sm: '220px' },
-              px: { xs: 1.25, sm: 2 },
+              maxWidth: { xs: '150px', sm: '240px' },
+              pl: { xs: 1.25, sm: 2 },
+              pr: { xs: 0.75, sm: 1.25 },
+              '& .MuiButton-endIcon': {
+                ml: 0.25,
+                mr: -0.25,
+                '& > svg': { fontSize: '1.25rem' },
+              },
             }}
           >
-            {currentBook}
+            <Box
+              component="span"
+              sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                minWidth: 0,
+              }}
+            >
+              {currentBook}
+            </Box>
           </Button>
           <Button
             variant="outlined"
             onClick={handleChapterClick}
+            aria-haspopup="true"
+            aria-expanded={Boolean(chapterAnchorEl)}
+            endIcon={<ArrowDropDownIcon />}
             sx={{
-              minWidth: 36,
+              minWidth: 56,
               height: 36,
-              p: 0,
               ml: { xs: 0.5, sm: 1 },
+              pl: 1,
+              pr: 0.5,
               fontFamily: 'var(--font-serif), serif',
               fontWeight: 600,
+              '& .MuiButton-endIcon': {
+                ml: 0.25,
+                mr: -0.25,
+                '& > svg': { fontSize: '1.25rem' },
+              },
             }}
           >
             {currentChapter}

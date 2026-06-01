@@ -246,8 +246,10 @@ export default function BibleReader({
                   cursor: 'pointer',
                   position: 'relative',
                   px: { xs: 1.5, sm: 2 },
-                  py: 1,
-                  mb: 0.5,
+                  py: 0.6,
+                  mb: 0.25,
+                  fontSize: { xs: '1.1rem', sm: '1.18rem' },
+                  lineHeight: 1.6,
                   borderRadius: 1,
                   borderLeft: '3px solid',
                   borderLeftColor: isHighlighted ? 'secondary.main' : 'transparent',
@@ -266,9 +268,9 @@ export default function BibleReader({
                 <Typography
                   component="sup"
                   sx={{
-                    mr: 0.6,
+                    mr: 0.5,
                     fontFamily: 'var(--font-sans), sans-serif',
-                    fontSize: '0.7rem',
+                    fontSize: '0.6rem',
                     fontWeight: 600,
                     letterSpacing: '0.02em',
                     color: 'secondary.main',

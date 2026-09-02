@@ -73,6 +73,16 @@ export default function BibleReader({
       mouseX: number;
       mouseY: number;
     } | null>(null);
+
+  const [isCrossRefsDrawerOpen, setIsCrossRefsDrawerOpen] = useState(false);
+  const [crossRefs, setCrossRefs] = useState<string | null>(null);
+  const [crossRefsLoading, setCrossRefsLoading] = useState(false);
+  const [crossRefsError, setCrossRefsError] = useState<string | null>(null);
+
+  const [isInterlinearDrawerOpen, setIsInterlinearDrawerOpen] = useState(false);
+  const [interlinear, setInterlinear] = useState<string | null>(null);
+  const [interlinearLoading, setInterlinearLoading] = useState(false);
+  const [interlinearError, setInterlinearError] = useState<string | null>(null);
   const highlightedVerseRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -91,7 +101,7 @@ export default function BibleReader({
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Don't navigate if a modal/drawer is open or if typing in an input
-      if (isCommentaryDrawerOpen || isSearchDrawerOpen || (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement)) {
+      if (isCommentaryDrawerOpen || isSearchDrawerOpen || isCrossRefsDrawerOpen || isInterlinearDrawerOpen || (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement)) {
         return;
       }
 
@@ -175,6 +185,46 @@ export default function BibleReader({
       onFindRelated(selectedVerse.text);
     }
     handleCloseVerseMenu();
+  };
+
+  const handleCrossRefsClick = async () => {
+    if (!selectedVerse) return;
+    handleCloseVerseMenu();
+    setCrossRefs(null);
+    setCrossRefsError(null);
+    setIsCrossRefsDrawerOpen(true);
+    setCrossRefsLoading(true);
+    try {
+      const reference = `${selectedVerse.book} ${selectedVerse.chapter}:${selectedVerse.verse}`;
+      const response = await fetch(`/api/cross-references?reference=${encodeURIComponent(reference)}`);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to fetch cross-references');
+      setCrossRefs(data.text);
+    } catch (error) {
+      setCrossRefsError(error instanceof Error ? error.message : 'An error occurred');
+    } finally {
+      setCrossRefsLoading(false);
+    }
+  };
+
+  const handleInterlinearClick = async () => {
+    if (!selectedVerse) return;
+    handleCloseVerseMenu();
+    setInterlinear(null);
+    setInterlinearError(null);
+    setIsInterlinearDrawerOpen(true);
+    setInterlinearLoading(true);
+    try {
+      const reference = `${selectedVerse.book} ${selectedVerse.chapter}:${selectedVerse.verse}`;
+      const response = await fetch(`/api/interlinear?reference=${encodeURIComponent(reference)}`);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to fetch interlinear');
+      setInterlinear(data.text);
+    } catch (error) {
+      setInterlinearError(error instanceof Error ? error.message : 'An error occurred');
+    } finally {
+      setInterlinearLoading(false);
+    }
   };
 
   const handleCloseCommentary = () => {
@@ -521,6 +571,227 @@ export default function BibleReader({
         </Box>
       </Drawer>
 
+      {/* Cross References Drawer */}
+      <Drawer
+        anchor="right"
+        open={isCrossRefsDrawerOpen}
+        onClose={() => setIsCrossRefsDrawerOpen(false)}
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: { xs: '100%', sm: 520 },
+            boxSizing: 'border-box',
+            backgroundColor: theme.palette.background.paper,
+          },
+        }}
+      >
+        <Box
+          sx={{
+            px: 3,
+            py: 1.5,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            flexShrink: 0,
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.25 }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'secondary.main',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                fontWeight: 600,
+                fontSize: '0.65rem',
+              }}
+            >
+              Cross References
+            </Typography>
+            {selectedVerse && (
+              <Typography
+                variant="body2"
+                sx={{
+                  fontFamily: 'var(--font-serif), serif',
+                  fontStyle: 'italic',
+                  color: 'text.secondary',
+                }}
+              >
+                {selectedVerse.book} {selectedVerse.chapter}:{selectedVerse.verse}
+              </Typography>
+            )}
+          </Box>
+          <IconButton onClick={() => setIsCrossRefsDrawerOpen(false)} size="small">
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </Box>
+        <Box
+          sx={{
+            flex: 1,
+            px: 3,
+            py: 2,
+            overflowY: 'auto',
+            '& h1, & h2, & h3, & h4': {
+              fontFamily: 'var(--font-serif), serif',
+              color: 'primary.main',
+              mt: 2.5,
+              mb: 1,
+              lineHeight: 1.3,
+            },
+            '& h1': { fontSize: '1.5rem' },
+            '& h2': { fontSize: '1.25rem' },
+            '& h3': { fontSize: '1.1rem' },
+            '& p': {
+              fontFamily: 'var(--font-serif), serif',
+              fontSize: '1rem',
+              lineHeight: 1.7,
+              mb: 1.5,
+              color: 'text.primary',
+            },
+            '& em': { color: 'secondary.main' },
+            '& strong': { color: 'primary.main' },
+          }}
+        >
+          {crossRefsLoading && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+              <ScaleLoader color={theme.palette.secondary.main} />
+            </Box>
+          )}
+          {!crossRefsLoading && crossRefsError && (
+            <Typography color="error" sx={{ p: 2, textAlign: 'center' }}>
+              {crossRefsError}
+            </Typography>
+          )}
+          {!crossRefsLoading && !crossRefsError && crossRefs && (
+            <ReactMarkdown>{crossRefs}</ReactMarkdown>
+          )}
+        </Box>
+      </Drawer>
+
+      {/* Original Language / Interlinear Drawer */}
+      <Drawer
+        anchor="right"
+        open={isInterlinearDrawerOpen}
+        onClose={() => setIsInterlinearDrawerOpen(false)}
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: { xs: '100%', sm: 560 },
+            boxSizing: 'border-box',
+            backgroundColor: theme.palette.background.paper,
+          },
+        }}
+      >
+        <Box
+          sx={{
+            px: 3,
+            py: 1.5,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            flexShrink: 0,
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.25 }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'secondary.main',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                fontWeight: 600,
+                fontSize: '0.65rem',
+              }}
+            >
+              Original Language
+            </Typography>
+            {selectedVerse && (
+              <Typography
+                variant="body2"
+                sx={{
+                  fontFamily: 'var(--font-serif), serif',
+                  fontStyle: 'italic',
+                  color: 'text.secondary',
+                }}
+              >
+                {selectedVerse.book} {selectedVerse.chapter}:{selectedVerse.verse}
+              </Typography>
+            )}
+          </Box>
+          <IconButton onClick={() => setIsInterlinearDrawerOpen(false)} size="small">
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </Box>
+        <Box
+          sx={{
+            flex: 1,
+            px: 3,
+            py: 2,
+            overflowY: 'auto',
+            fontFamily: 'var(--font-sans), sans-serif',
+            '& h1, & h2, & h3, & h4': {
+              color: 'primary.main',
+              mt: 2.5,
+              mb: 1,
+              lineHeight: 1.3,
+            },
+            '& h1': { fontSize: '1.5rem' },
+            '& h2': { fontSize: '1.25rem' },
+            '& h3': { fontSize: '1.1rem' },
+            '& p': {
+              fontSize: '0.9rem',
+              lineHeight: 1.6,
+              mb: 1.5,
+              color: 'text.primary',
+            },
+            '& table': {
+              width: '100%',
+              borderCollapse: 'collapse',
+              fontSize: '0.85rem',
+            },
+            '& th': {
+              textAlign: 'left',
+              pb: 0.5,
+              color: 'secondary.main',
+              fontWeight: 600,
+              fontSize: '0.7rem',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              borderBottom: `1px solid ${theme.palette.divider}`,
+            },
+            '& td': {
+              py: 0.75,
+              pr: 1.5,
+              verticalAlign: 'top',
+              borderBottom: `1px solid ${alpha(theme.palette.divider, 0.4)}`,
+            },
+            '& strong': { color: 'primary.main' },
+            '& em': { color: 'secondary.main' },
+            '& code': {
+              fontFamily: 'monospace',
+              fontSize: '0.85em',
+              backgroundColor: alpha(theme.palette.secondary.main, 0.08),
+              px: 0.5,
+              borderRadius: 0.5,
+            },
+          }}
+        >
+          {interlinearLoading && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+              <ScaleLoader color={theme.palette.secondary.main} />
+            </Box>
+          )}
+          {!interlinearLoading && interlinearError && (
+            <Typography color="error" sx={{ p: 2, textAlign: 'center' }}>
+              {interlinearError}
+            </Typography>
+          )}
+          {!interlinearLoading && !interlinearError && interlinear && (
+            <ReactMarkdown>{interlinear}</ReactMarkdown>
+          )}
+        </Box>
+      </Drawer>
+
       <Menu
         open={contextMenu !== null}
         onClose={handleCloseVerseMenu}
@@ -538,6 +809,8 @@ export default function BibleReader({
       >
         <MenuItem onClick={handleCommentaryClick}>Commentary</MenuItem>
         <MenuItem onClick={handleRelatedClick}>Related Verses</MenuItem>
+        <MenuItem onClick={handleCrossRefsClick}>Cross References</MenuItem>
+        <MenuItem onClick={handleInterlinearClick}>Original Language</MenuItem>
       </Menu>
     </Box>
   );

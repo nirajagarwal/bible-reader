@@ -20,7 +20,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import ReactMarkdown from 'react-markdown';
-import { Verse, Commentary, SearchResult } from '@/types/bible';
+import { Verse, Commentary, SearchResult, CrossReference } from '@/types/bible';
 import ScaleLoader from 'react-spinners/ScaleLoader';
 
 interface BibleReaderProps {
@@ -75,7 +75,7 @@ export default function BibleReader({
     } | null>(null);
 
   const [isCrossRefsDrawerOpen, setIsCrossRefsDrawerOpen] = useState(false);
-  const [crossRefs, setCrossRefs] = useState<string | null>(null);
+  const [crossRefs, setCrossRefs] = useState<CrossReference[]>([]);
   const [crossRefsLoading, setCrossRefsLoading] = useState(false);
   const [crossRefsError, setCrossRefsError] = useState<string | null>(null);
 
@@ -190,7 +190,7 @@ export default function BibleReader({
   const handleCrossRefsClick = async () => {
     if (!selectedVerse) return;
     handleCloseVerseMenu();
-    setCrossRefs(null);
+    setCrossRefs([]);
     setCrossRefsError(null);
     setIsCrossRefsDrawerOpen(true);
     setCrossRefsLoading(true);
@@ -199,12 +199,17 @@ export default function BibleReader({
       const response = await fetch(`/api/cross-references?reference=${encodeURIComponent(reference)}`);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Failed to fetch cross-references');
-      setCrossRefs(data.text);
+      setCrossRefs(data.crossRefs ?? []);
     } catch (error) {
       setCrossRefsError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setCrossRefsLoading(false);
     }
+  };
+
+  const handleCrossRefNavigate = (ref: CrossReference) => {
+    onVerseSelectFromSearch(ref.book, ref.chapter, ref.verse);
+    setIsCrossRefsDrawerOpen(false);
   };
 
   const handleInterlinearClick = async () => {
@@ -625,45 +630,70 @@ export default function BibleReader({
             <CloseIcon fontSize="small" />
           </IconButton>
         </Box>
-        <Box
-          sx={{
-            flex: 1,
-            px: 3,
-            py: 2,
-            overflowY: 'auto',
-            '& h1, & h2, & h3, & h4': {
-              fontFamily: 'var(--font-serif), serif',
-              color: 'primary.main',
-              mt: 2.5,
-              mb: 1,
-              lineHeight: 1.3,
-            },
-            '& h1': { fontSize: '1.5rem' },
-            '& h2': { fontSize: '1.25rem' },
-            '& h3': { fontSize: '1.1rem' },
-            '& p': {
-              fontFamily: 'var(--font-serif), serif',
-              fontSize: '1rem',
-              lineHeight: 1.7,
-              mb: 1.5,
-              color: 'text.primary',
-            },
-            '& em': { color: 'secondary.main' },
-            '& strong': { color: 'primary.main' },
-          }}
-        >
+        <Box sx={{ flex: 1, overflowY: 'auto' }}>
           {crossRefsLoading && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
               <ScaleLoader color={theme.palette.secondary.main} />
             </Box>
           )}
           {!crossRefsLoading && crossRefsError && (
-            <Typography color="error" sx={{ p: 2, textAlign: 'center' }}>
-              {crossRefsError}
-            </Typography>
+            <Typography color="error" sx={{ px: 3, py: 2 }}>{crossRefsError}</Typography>
           )}
-          {!crossRefsLoading && !crossRefsError && crossRefs && (
-            <ReactMarkdown>{crossRefs}</ReactMarkdown>
+          {!crossRefsLoading && !crossRefsError && crossRefs.length === 0 && (
+            <Typography color="text.secondary" sx={{ px: 3, py: 2 }}>No cross-references found.</Typography>
+          )}
+          {!crossRefsLoading && !crossRefsError && crossRefs.length > 0 && (
+            <List sx={{ p: 0 }}>
+              {crossRefs.map((ref) => (
+                <ListItem
+                  button
+                  key={ref.reference}
+                  onClick={() => handleCrossRefNavigate(ref)}
+                  sx={{
+                    borderBottom: `1px solid ${theme.palette.divider}`,
+                    px: 2.5,
+                    py: 0.75,
+                    transition: 'background-color 120ms ease',
+                    '&:hover': {
+                      backgroundColor: alpha(theme.palette.secondary.main, 0.06),
+                    },
+                  }}
+                >
+                  <ListItemText
+                    disableTypography
+                    primary={
+                      <Typography
+                        sx={{
+                          fontFamily: 'var(--font-serif), serif',
+                          fontSize: '0.95rem',
+                          lineHeight: 1.4,
+                          color: 'text.primary',
+                        }}
+                      >
+                        {ref.text}
+                      </Typography>
+                    }
+                    secondary={
+                      <Typography
+                        component="span"
+                        sx={{
+                          display: 'block',
+                          fontFamily: 'var(--font-sans), sans-serif',
+                          fontSize: '0.62rem',
+                          letterSpacing: '0.05em',
+                          textTransform: 'uppercase',
+                          color: 'secondary.main',
+                          mt: 0.25,
+                          fontWeight: 600,
+                        }}
+                      >
+                        {ref.reference}
+                      </Typography>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
           )}
         </Box>
       </Drawer>

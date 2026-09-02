@@ -38,4 +38,13 @@ export interface SearchResponse {
 export interface ReadingState {
   book: string;
   chapter: number;
+}
+
+export interface CrossReference {
+  reference: string;
+  book: string;
+  chapter: number;
+  verse: number;
+  text: string;
+  votes: number;
 } 
